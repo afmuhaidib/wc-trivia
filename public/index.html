@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>كأس العالم 2026 - توقع النتائج</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-icon">⚽</span>
+          <div>
+            <div class="logo-title">كأس العالم 2026</div>
+            <div class="logo-sub">توقع النتائج وتنافس مع الأصدقاء</div>
+          </div>
+        </div>
+        <nav class="nav">
+          <button class="nav-btn active" data-page="matches" onclick="showPage('matches')">
+            <span>🏟️</span> المباريات
+          </button>
+          <button class="nav-btn" data-page="predictions" onclick="showPage('predictions')">
+            <span>📋</span> توقعاتي
+          </button>
+          <button class="nav-btn" data-page="leaderboard" onclick="showPage('leaderboard')">
+            <span>🏆</span> لوحة الصدارة
+          </button>
+        </nav>
+        <div class="auth-area">
+          <div id="user-info" class="user-info hidden">
+            <span class="user-avatar" id="user-avatar">م</span>
+            <span id="user-name"></span>
+            <button class="btn-ghost btn-sm" onclick="logout()">خروج</button>
+          </div>
+          <div id="auth-buttons" class="auth-buttons">
+            <button class="btn btn-ghost" onclick="openModal('login')">دخول</button>
+            <button class="btn btn-primary" onclick="openModal('register')">إنشاء حساب</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <div class="hero" id="hero-banner">
+      <div class="hero-content">
+        <div class="hero-badge">🇺🇸 🇨🇦 🇲🇽 | يونيو - يوليو 2026</div>
+        <h1 class="hero-title">توقّع النتائج وكن الأفضل</h1>
+        <p class="hero-desc">
+          توقع نتائج مباريات كأس العالم، اجمع النقاط، وتنافس مع اللاعبين حول العالم
+        </p>
+        <div class="hero-points-guide">
+          <div class="point-card">
+            <span class="point-icon">🎯</span>
+            <div class="point-val">5 نقاط</div>
+            <div class="point-label">النتيجة الصحيحة</div>
+          </div>
+          <div class="point-card">
+            <span class="point-icon">✅</span>
+            <div class="point-val">1 نقطة</div>
+            <div class="point-label">الفائز الصحيح</div>
+          </div>
+          <div class="point-card">
+            <span class="point-icon">❌</span>
+            <div class="point-val">0 نقطة</div>
+            <div class="point-label">توقع خاطئ</div>
+          </div>
+        </div>
+        <div class="hero-stats" id="hero-stats">
+          <div class="stat-item"><span id="stat-users">--</span> لاعب</div>
+          <div class="stat-sep">•</div>
+          <div class="stat-item"><span id="stat-predictions">--</span> توقع</div>
+          <div class="stat-sep">•</div>
+          <div class="stat-item"><span id="stat-matches">0</span> مباراة منتهية</div>
+        </div>
+      </div>
+      <div class="hero-ball">⚽</div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Matches Page -->
+      <section id="page-matches" class="page active">
+        <div class="section-header">
+          <h2 class="section-title">مباريات كأس العالم 2026</h2>
+          <div class="filters">
+            <select class="filter-select" id="stage-filter" onchange="filterMatches()">
+              <option value="">جميع المراحل</option>
+              <option value="group">دور المجموعات</option>
+              <option value="round_of_32">دور الـ 32</option>
+              <option value="round_of_16">دور الـ 16</option>
+              <option value="quarter_final">ربع النهائي</option>
+              <option value="semi_final">نصف النهائي</option>
+              <option value="third_place">المركز الثالث</option>
+              <option value="final">النهائي</option>
+            </select>
+            <select class="filter-select" id="group-filter" onchange="filterMatches()">
+              <option value="">جميع المجموعات</option>
+            </select>
+          </div>
+        </div>
+        <div id="matches-container" class="matches-grid"></div>
+      </section>
+
+      <!-- My Predictions Page -->
+      <section id="page-predictions" class="page">
+        <div class="section-header">
+          <h2 class="section-title">توقعاتي</h2>
+        </div>
+        <div id="predictions-container">
+          <div class="empty-state" id="pred-empty">
+            <span class="empty-icon">📋</span>
+            <p>لم تقم بأي توقعات بعد</p>
+            <button class="btn btn-primary" onclick="showPage('matches')">ابدأ التوقع</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Leaderboard Page -->
+      <section id="page-leaderboard" class="page">
+        <div class="section-header">
+          <h2 class="section-title">🏆 لوحة الصدارة</h2>
+        </div>
+        <div id="leaderboard-container"></div>
+      </section>
+    </main>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+      <div class="modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+
+        <!-- Login Form -->
+        <div id="modal-login">
+          <div class="modal-header">
+            <div class="modal-icon">🔑</div>
+            <h3>تسجيل الدخول</h3>
+          </div>
+          <form onsubmit="login(event)">
+            <div class="form-group">
+              <label>اسم المستخدم</label>
+              <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" required autocomplete="username" />
+            </div>
+            <div class="form-group">
+              <label>كلمة المرور</label>
+              <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required autocomplete="current-password" />
+            </div>
+            <div class="form-error hidden" id="login-error"></div>
+            <button type="submit" class="btn btn-primary btn-full" id="login-submit">دخول</button>
+          </form>
+          <p class="modal-switch">
+            ليس لديك حساب؟
+            <button class="link-btn" onclick="switchModal('register')">إنشاء حساب جديد</button>
+          </p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="modal-register" class="hidden">
+          <div class="modal-header">
+            <div class="modal-icon">⭐</div>
+            <h3>إنشاء حساب جديد</h3>
+          </div>
+          <form onsubmit="register(event)">
+            <div class="form-group">
+              <label>اسم المستخدم</label>
+              <input type="text" id="reg-username" placeholder="اختر اسم مستخدم (3 أحرف على الأقل)" required minlength="3" autocomplete="username" />
+            </div>
+            <div class="form-group">
+              <label>كلمة المرور</label>
+              <input type="password" id="reg-password" placeholder="كلمة مرور قوية (6 أحرف على الأقل)" required minlength="6" autocomplete="new-password" />
+            </div>
+            <div class="form-group">
+              <label>تأكيد كلمة المرور</label>
+              <input type="password" id="reg-confirm" placeholder="أعد إدخال كلمة المرور" required autocomplete="new-password" />
+            </div>
+            <div class="form-error hidden" id="reg-error"></div>
+            <button type="submit" class="btn btn-primary btn-full" id="reg-submit">إنشاء الحساب</button>
+          </form>
+          <p class="modal-switch">
+            لديك حساب بالفعل؟
+            <button class="link-btn" onclick="switchModal('login')">تسجيل الدخول</button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prediction Modal -->
+    <div class="modal-overlay" id="pred-modal-overlay" onclick="closePredModal()">
+      <div class="modal pred-modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closePredModal()">✕</button>
+        <div class="pred-modal-header">
+          <span class="pred-modal-stage" id="pm-stage"></span>
+          <span class="pred-modal-date" id="pm-date"></span>
+        </div>
+        <div class="pred-teams">
+          <div class="pred-team">
+            <div class="pred-flag" id="pm-home-flag"></div>
+            <div class="pred-team-name" id="pm-home"></div>
+          </div>
+          <div class="pred-vs">VS</div>
+          <div class="pred-team">
+            <div class="pred-flag" id="pm-away-flag"></div>
+            <div class="pred-team-name" id="pm-away"></div>
+          </div>
+        </div>
+        <div class="pred-score-inputs">
+          <div class="score-input-wrap">
+            <button class="score-btn" onclick="changeScore('home', -1)">−</button>
+            <input type="number" id="pred-home-score" value="0" min="0" max="20" class="score-input" />
+            <button class="score-btn" onclick="changeScore('home', 1)">+</button>
+          </div>
+          <div class="score-colon">:</div>
+          <div class="score-input-wrap">
+            <button class="score-btn" onclick="changeScore('away', -1)">−</button>
+            <input type="number" id="pred-away-score" value="0" min="0" max="20" class="score-input" />
+            <button class="score-btn" onclick="changeScore('away', 1)">+</button>
+          </div>
+        </div>
+        <div class="form-error hidden" id="pred-error"></div>
+        <button class="btn btn-primary btn-full" onclick="submitPrediction()" id="pred-submit">
+          💾 حفظ التوقع
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
