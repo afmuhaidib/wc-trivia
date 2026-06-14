@@ -18,7 +18,17 @@ function stores() {
     matches: getStore('matches'),
     predictions: getStore('predictions'),
     adminLogs: getStore('admin-logs'),
+    ipLogs: getStore('ip-logs'),
   };
+}
+
+function getIP(req) {
+  return req.headers['x-nf-client-connection-ip'] || req.headers['x-forwarded-for'] || req.ip || 'unknown';
+}
+
+async function logIP(store, action, username, ip) {
+  const key = `${action}/${Date.now()}_${randomUUID()}`;
+  await store.setJSON(key, { action, username, ip, at: new Date().toISOString() });
 }
 
 async function getAllJSON(store) {
@@ -74,7 +84,7 @@ app.post('/api/auth/register', async (req, res) => {
   if (password.length < 6)
     return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' });
 
-  const { users } = stores();
+  const { users, ipLogs } = stores();
   const id = randomUUID();
   const hash = await bcrypt.hash(password, 12);
   const user = { id, username, password_hash: hash, points: 0, is_admin: 0, created_at: new Date().toISOString() };
@@ -86,7 +96,10 @@ app.post('/api/auth/register', async (req, res) => {
   } catch {
     return res.status(409).json({ error: 'اسم المستخدم موجود مسبقاً' });
   }
-  await users.setJSON(`by_id/${id}`, user);
+  await Promise.all([
+    users.setJSON(`by_id/${id}`, user),
+    logIP(ipLogs, 'register', username, getIP(req)),
+  ]);
 
   const token = jwt.sign({ id, username, is_admin: false }, JWT_SECRET, { expiresIn: '7d' });
   res.json({ token, username });
@@ -97,7 +110,7 @@ app.post('/api/auth/login', async (req, res) => {
   if (!username || !password)
     return res.status(400).json({ error: 'اسم المستخدم وكلمة المرور مطلوبان' });
 
-  const { users } = stores();
+  const { users, ipLogs } = stores();
   const user = await users.get(`by_username/${username}`, { type: 'json' }).catch(() => null);
   if (!user || !(await bcrypt.compare(password, user.password_hash)))
     return res.status(401).json({ error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
@@ -106,6 +119,7 @@ app.post('/api/auth/login', async (req, res) => {
   await Promise.all([
     users.setJSON(`by_username/${username}`, updatedUser),
     users.setJSON(`by_id/${user.id}`, updatedUser),
+    logIP(ipLogs, 'login', username, getIP(req)),
   ]);
 
   const token = jwt.sign(
@@ -211,7 +225,7 @@ app.post('/api/predictions', authenticate, async (req, res) => {
   if (home_score < 0 || away_score < 0 || home_score > 20 || away_score > 20)
     return res.status(400).json({ error: 'نتيجة غير صالحة' });
 
-  const { matches, predictions } = stores();
+  const { matches, predictions, ipLogs } = stores();
   const match = await matches.get(String(match_id), { type: 'json' }).catch(() => null);
   if (!match) return res.status(404).json({ error: 'المباراة غير موجودة' });
   if (match.status === 'finished')
@@ -234,7 +248,10 @@ app.post('/api/predictions', authenticate, async (req, res) => {
     created_at: existing?.created_at ?? now,
     updated_at: now,
   };
-  await predictions.setJSON(predKey, pred);
+  await Promise.all([
+    predictions.setJSON(predKey, pred),
+    logIP(ipLogs, 'predict', req.user.username, getIP(req)),
+  ]);
 
   res.json({ success: true, message: 'تم حفظ توقعك بنجاح' });
 });
@@ -416,7 +433,7 @@ app.put('/api/admin/users/:username/points', authenticate, requireAdmin, async (
   if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
 
   const updated = { ...user, points: (user.points || 0) + delta };
-  const ip = req.headers['x-nf-client-connection-ip'] || req.headers['x-forwarded-for'] || req.ip || 'unknown';
+  const ip = getIP(req);
   const logKey = `points/${Date.now()}_${randomUUID()}`;
   await Promise.all([
     users.setJSON(`by_username/${username}`, updated),
