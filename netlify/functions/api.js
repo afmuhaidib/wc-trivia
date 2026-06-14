@@ -391,6 +391,26 @@ app.post('/api/admin/reseed-matches', authenticate, requireAdmin, async (req, re
   res.json({ success: true, seeded });
 });
 
+// Adjust user points (add or deduct)
+app.put('/api/admin/users/:username/points', authenticate, requireAdmin, async (req, res) => {
+  const { username } = req.params;
+  const { delta } = req.body;
+  if (typeof delta !== 'number' || !Number.isInteger(delta))
+    return res.status(400).json({ error: 'delta يجب أن يكون عدداً صحيحاً' });
+
+  const { users } = stores();
+  const user = await users.get(`by_username/${username}`, { type: 'json' }).catch(() => null);
+  if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
+
+  const updated = { ...user, points: (user.points || 0) + delta };
+  await Promise.all([
+    users.setJSON(`by_username/${username}`, updated),
+    users.setJSON(`by_id/${user.id}`, updated),
+  ]);
+
+  res.json({ success: true, username, points: updated.points, delta });
+});
+
 // ── Stats ─────────────────────────────────────────────────────────────────────
 app.get('/api/stats', async (req, res) => {
   const { users, predictions, matches } = stores();

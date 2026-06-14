@@ -861,3 +861,29 @@ body {
   .lb-username { font-size: .85rem; }
   .lb-avatar { width: 32px; height: 32px; font-size: .8rem; }
 }
+
+/* ── Admin Panel ─────────────────────────────────────────────────────────── */
+.admin-panel {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.admin-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 16px;
+}
+.admin-result {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #0a3d1f;
+  border: 1px solid #1a6b37;
+  border-radius: 10px;
+  color: #4cde80;
+  font-size: .9rem;
+  text-align: center;
+}

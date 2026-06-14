@@ -61,6 +61,16 @@ function updateAuthUI() {
     userInfo.classList.add('hidden');
     authBtns.classList.remove('hidden');
   }
+
+  const isAdmin = token && jwtPayload(token).is_admin;
+  document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+    btn.classList.toggle('hidden', !isAdmin);
+  });
+}
+
+function jwtPayload(t) {
+  try { return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); }
+  catch { return {}; }
 }
 
 function saveAuth(t, u) {
@@ -590,6 +600,31 @@ function showToast(msg, type = '') {
   void toast.offsetWidth;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+/* ── Admin ─────────────────────────────────────────────────────────────────── */
+async function adminAdjustPoints() {
+  const username = document.getElementById('admin-username').value.trim();
+  const delta = parseInt(document.getElementById('admin-points-delta').value, 10);
+  const errEl = document.getElementById('admin-error');
+  const resultEl = document.getElementById('admin-result');
+
+  errEl.classList.add('hidden');
+  resultEl.classList.add('hidden');
+
+  if (!username) { errEl.textContent = 'أدخل اسم المستخدم'; errEl.classList.remove('hidden'); return; }
+  if (isNaN(delta) || delta === 0) { errEl.textContent = 'أدخل قيمة نقاط صحيحة (غير صفر)'; errEl.classList.remove('hidden'); return; }
+
+  try {
+    const data = await api('PUT', `/admin/users/${encodeURIComponent(username)}/points`, { delta });
+    const sign = data.delta > 0 ? '+' : '';
+    resultEl.textContent = `✅ ${esc(data.username)}: ${sign}${data.delta} نقطة — الرصيد الجديد: ${data.points}`;
+    resultEl.classList.remove('hidden');
+    document.getElementById('admin-points-delta').value = '';
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
 }
 
 /* ── Helpers ───────────────────────────────────────────────────────────────── */

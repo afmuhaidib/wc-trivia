@@ -28,6 +28,7 @@
           <button class="bnav-btn" data-page="matches" onclick="showPage('matches')">🏟️ المباريات</button>
           <button class="bnav-btn" data-page="predictions" onclick="showPage('predictions')">📋 توقعاتي</button>
           <button class="bnav-btn" data-page="leaderboard" onclick="showPage('leaderboard')">🏆 الصدارة</button>
+          <button class="bnav-btn admin-nav-btn hidden" data-page="admin" onclick="showPage('admin')">⚙️ الإدارة</button>
         </nav>
         <div class="auth-area">
           <div id="user-info" class="user-info hidden">
@@ -127,6 +128,27 @@
         </div>
         <div id="leaderboard-container"></div>
       </section>
+
+      <!-- Admin Page -->
+      <section id="page-admin" class="page">
+        <div class="section-header">
+          <h2 class="section-title">⚙️ لوحة الإدارة</h2>
+        </div>
+        <div class="admin-panel">
+          <h3 class="admin-section-title">تعديل نقاط لاعب</h3>
+          <div class="form-group">
+            <label>اسم المستخدم</label>
+            <input type="text" id="admin-username" placeholder="أدخل اسم المستخدم" autocorrect="off" autocapitalize="none" />
+          </div>
+          <div class="form-group">
+            <label>النقاط (موجبة للإضافة، سالبة للخصم)</label>
+            <input type="number" id="admin-points-delta" placeholder="مثال: 5 أو -3" />
+          </div>
+          <div class="form-error hidden" id="admin-error"></div>
+          <button class="btn btn-primary btn-full" onclick="adminAdjustPoints()">تطبيق</button>
+          <div id="admin-result" class="admin-result hidden"></div>
+        </div>
+      </section>
     </main>
 
     <!-- Bottom Nav Bar -->
@@ -142,6 +164,10 @@
       <button class="bnav-btn" data-page="leaderboard" onclick="showPage('leaderboard')">
         <span class="bnav-icon">🏆</span>
         <span class="bnav-label">الصدارة</span>
+      </button>
+      <button class="bnav-btn admin-nav-btn hidden" data-page="admin" onclick="showPage('admin')">
+        <span class="bnav-icon">⚙️</span>
+        <span class="bnav-label">الإدارة</span>
       </button>
     </nav>
 
