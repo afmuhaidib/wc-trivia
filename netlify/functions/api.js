@@ -102,6 +102,12 @@ app.post('/api/auth/login', async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.password_hash)))
     return res.status(401).json({ error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
 
+  const updatedUser = { ...user, last_login_at: new Date().toISOString() };
+  await Promise.all([
+    users.setJSON(`by_username/${username}`, updatedUser),
+    users.setJSON(`by_id/${user.id}`, updatedUser),
+  ]);
+
   const token = jwt.sign(
     { id: user.id, username: user.username, is_admin: !!user.is_admin },
     JWT_SECRET,
