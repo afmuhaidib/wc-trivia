@@ -65,7 +65,7 @@ body {
 .header-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 calc(16px + var(--safe-right)) 0 calc(16px + var(--safe-left));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -208,7 +208,7 @@ body {
 .main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px 16px 24px;
+  padding: 20px calc(16px + var(--safe-left)) 24px calc(16px + var(--safe-right));
   /* Smooth scrolling on iOS */
   -webkit-overflow-scrolling: touch;
 }
@@ -297,6 +297,22 @@ body {
   font-weight: 800;
   font-size: .85rem;
   margin-bottom: 10px;
+}
+
+/* Today's matches section */
+.today-section { order: -2; margin-bottom: 16px; }
+.today-section .group-label {
+  background: linear-gradient(135deg, #b71c1c, #e53935);
+  box-shadow: 0 2px 12px rgba(229, 57, 53, 0.35);
+  animation: pulse-red 2s ease-in-out infinite;
+}
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 2px 12px rgba(229, 57, 53, 0.35); }
+  50%       { box-shadow: 0 2px 20px rgba(229, 57, 53, 0.65); }
+}
+.today-section .match-card {
+  border-color: rgba(229, 57, 53, 0.2);
+  background: linear-gradient(to left, #fff5f5, #fff);
 }
 
 /* Saudi group special styling */
@@ -795,7 +811,7 @@ body {
   .bottom-nav { display: none; }
 
   .desktop-nav { display: flex; gap: 4px; }
-  .desktop-nav .bnav-btn { height: 40px; padding: 0 14px; border-radius: 8px; font-size: .9rem; color: var(--text); }
+  .desktop-nav .bnav-btn { height: 40px; padding: 0 14px; border-radius: 8px; font-size: .9rem; color: var(--text); flex-direction: row; gap: 6px; }
   .desktop-nav .bnav-btn.active { background: var(--green-pale); color: var(--green-dark); font-weight: 600; }
 
   /* Restore top nav inside header */
@@ -866,7 +882,7 @@ body {
 .admin-panel {
   max-width: 480px;
   margin: 0 auto;
-  background: var(--card-bg);
+  background: var(--card);
   border-radius: 16px;
   padding: 24px;
   box-shadow: var(--shadow);

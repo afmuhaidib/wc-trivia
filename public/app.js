@@ -237,11 +237,30 @@ function filterMatches() {
   renderMatches(filtered);
 }
 
+function isToday(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  return d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate();
+}
+
 function renderMatches(matches) {
   const container = document.getElementById('matches-container');
   if (!matches.length) {
     container.innerHTML = '<div class="empty-state"><span class="empty-icon">🔍</span><p>لا توجد مباريات</p></div>';
     return;
+  }
+
+  // Today's matches section at the top
+  const todayMatches = matches.filter(m => isToday(m.match_date));
+  let todaySection = '';
+  if (todayMatches.length) {
+    todaySection = `
+      <div class="group-section today-section">
+        <div class="group-label">🔴 مباريات اليوم</div>
+        ${todayMatches.map(renderMatchCard).join('')}
+      </div>`;
   }
 
   // Group by group_name/stage
@@ -259,7 +278,7 @@ function renderMatches(matches) {
     return 0;
   });
 
-  container.innerHTML = sectionList.map(({ label, group_key, matches: sMatches }) => {
+  container.innerHTML = todaySection + sectionList.map(({ label, group_key, matches: sMatches }) => {
     const isSaudi = group_key === SAUDI_GROUP;
     return `
       <div class="group-section${isSaudi ? ' saudi-group' : ''}">
