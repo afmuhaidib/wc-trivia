@@ -101,27 +101,23 @@ const groups = {
   },
 };
 
-// Per-match day offsets from groupStageStart (June 11 UTC).
-// Each group has 6 values: [md1_m1, md1_m2, md2_m1, md2_m2, md3_m1, md3_m2]
-// Fractional offsets represent time-of-day within the day (0.5 = ~12 hrs later).
-// Groups B & D have MD1 matches on consecutive days, so their second offset is +1, not +0.5.
+// Exact UTC kick-off times per group, sourced from official FIFA/Yahoo schedule.
+// Each group: [md1_slot1, md1_slot2, md2_slot1, md2_slot2, md3_slot1, md3_slot2]
+// All times UTC. ET (EDT) = UTC-4 during June/July.
 const groupSchedule = {
-  A: [0,   0.5, 7,   7.5,  13,  13.5], // Jun 11 / Jun 11 | Jun 18 / Jun 18 | Jun 24 / Jun 24
-  B: [1,   2,   7,   7.5,  13,  13.5], // Jun 12 / Jun 13 | Jun 18 / Jun 18 | Jun 24 / Jun 24
-  C: [2,   2.5, 8,   8.5,  13,  13.5], // Jun 13 / Jun 13 | Jun 19 / Jun 19 | Jun 24 / Jun 24
-  D: [1,   2,   8,   8.5,  14,  14.5], // Jun 12 / Jun 13 | Jun 19 / Jun 19 | Jun 25 / Jun 25
-  E: [3,   3.5, 9,   9.5,  14,  14.5], // Jun 14 / Jun 14 | Jun 20 / Jun 20 | Jun 25 / Jun 25
-  F: [3,   3.5, 9,   9.5,  14,  14.5], // Jun 14 / Jun 14 | Jun 20 / Jun 20 | Jun 25 / Jun 25
-  G: [4,   4.5, 10,  10.5, 15,  15.5], // Jun 15 / Jun 15 | Jun 21 / Jun 21 | Jun 26 / Jun 26
-  H: [4,   4.5, 10,  10.5, 15,  15.5], // Jun 15 / Jun 15 | Jun 21 / Jun 21 | Jun 26 / Jun 26
-  I: [5,   5.5, 11,  11.5, 15,  15.5], // Jun 16 / Jun 16 | Jun 22 / Jun 22 | Jun 26 / Jun 26
-  J: [5,   5.5, 11,  11.5, 16,  16.5], // Jun 16 / Jun 16 | Jun 22 / Jun 22 | Jun 27 / Jun 27
-  K: [6,   6.5, 12,  12.5, 16,  16.5], // Jun 17 / Jun 17 | Jun 23 / Jun 23 | Jun 27 / Jun 27
-  L: [6,   6.5, 12,  12.5, 16,  16.5], // Jun 17 / Jun 17 | Jun 23 / Jun 23 | Jun 27 / Jun 27
+  A: ['2026-06-12T00:00:00Z', '2026-06-12T02:30:00Z', '2026-06-19T01:00:00Z', '2026-06-18T16:00:00Z', '2026-06-25T01:00:00Z', '2026-06-25T01:00:00Z'],
+  B: ['2026-06-12T19:00:00Z', '2026-06-13T21:00:00Z', '2026-06-18T22:00:00Z', '2026-06-18T19:00:00Z', '2026-06-24T19:00:00Z', '2026-06-24T19:00:00Z'],
+  C: ['2026-06-13T22:00:00Z', '2026-06-14T01:00:00Z', '2026-06-20T00:30:00Z', '2026-06-19T22:00:00Z', '2026-06-24T22:00:00Z', '2026-06-24T22:00:00Z'],
+  D: ['2026-06-13T01:00:00Z', '2026-06-14T04:00:00Z', '2026-06-19T19:00:00Z', '2026-06-20T04:00:00Z', '2026-06-26T02:00:00Z', '2026-06-26T02:00:00Z'],
+  E: ['2026-06-14T17:00:00Z', '2026-06-14T23:00:00Z', '2026-06-20T20:00:00Z', '2026-06-21T00:00:00Z', '2026-06-25T20:00:00Z', '2026-06-25T20:00:00Z'],
+  F: ['2026-06-14T20:00:00Z', '2026-06-15T02:00:00Z', '2026-06-20T17:00:00Z', '2026-06-21T04:00:00Z', '2026-06-25T23:00:00Z', '2026-06-25T23:00:00Z'],
+  G: ['2026-06-14T23:00:00Z', '2026-06-16T01:00:00Z', '2026-06-21T19:00:00Z', '2026-06-22T01:00:00Z', '2026-06-27T03:00:00Z', '2026-06-27T03:00:00Z'],
+  H: ['2026-06-15T16:00:00Z', '2026-06-15T22:00:00Z', '2026-06-21T16:00:00Z', '2026-06-21T22:00:00Z', '2026-06-27T00:00:00Z', '2026-06-27T00:00:00Z'],
+  I: ['2026-06-16T19:00:00Z', '2026-06-16T22:00:00Z', '2026-06-22T21:00:00Z', '2026-06-23T00:00:00Z', '2026-06-26T19:00:00Z', '2026-06-26T19:00:00Z'],
+  J: ['2026-06-17T01:00:00Z', '2026-06-17T04:00:00Z', '2026-06-22T17:00:00Z', '2026-06-23T03:00:00Z', '2026-06-28T02:00:00Z', '2026-06-28T02:00:00Z'],
+  K: ['2026-06-17T17:00:00Z', '2026-06-18T02:00:00Z', '2026-06-23T17:00:00Z', '2026-06-24T02:00:00Z', '2026-06-27T23:30:00Z', '2026-06-27T23:30:00Z'],
+  L: ['2026-06-17T20:00:00Z', '2026-06-17T23:00:00Z', '2026-06-23T20:00:00Z', '2026-06-23T23:00:00Z', '2026-06-27T21:00:00Z', '2026-06-27T21:00:00Z'],
 };
-
-// Group stage starts June 11, 2026 (15:00 UTC = 1pm CST opening match)
-const groupStageStart = new Date('2026-06-11T15:00:00Z');
 
 // Matchday fixture patterns (indices into group.teams array)
 // MD1: 0v1, 2v3 | MD2: 0v2, 1v3 | MD3: 0v3, 1v2
@@ -142,8 +138,8 @@ function generateMatches() {
     const offsets = groupSchedule[groupKey];
 
     groupMatchups.forEach((matchup, matchdayIndex) => {
-      const off1 = offsets[matchdayIndex * 2];
-      const off2 = offsets[matchdayIndex * 2 + 1];
+      const date1 = offsets[matchdayIndex * 2];
+      const date2 = offsets[matchdayIndex * 2 + 1];
       matches.push({
         id: id++,
         stage: 'group',
@@ -155,7 +151,7 @@ function generateMatches() {
         away_team_ar: groupTeams[matchup[1]].ar,
         home_flag: groupTeams[matchup[0]].flag,
         away_flag: groupTeams[matchup[1]].flag,
-        match_date: new Date(groupStageStart.getTime() + off1 * 24 * 60 * 60 * 1000).toISOString(),
+        match_date: date1,
         home_score: null,
         away_score: null,
         status: 'upcoming',
@@ -171,7 +167,7 @@ function generateMatches() {
         away_team_ar: groupTeams[matchup[3]].ar,
         home_flag: groupTeams[matchup[2]].flag,
         away_flag: groupTeams[matchup[3]].flag,
-        match_date: new Date(groupStageStart.getTime() + off2 * 24 * 60 * 60 * 1000).toISOString(),
+        match_date: date2,
         home_score: null,
         away_score: null,
         status: 'upcoming',
@@ -179,7 +175,8 @@ function generateMatches() {
     });
   });
 
-  // Knockout rounds
+  // Knockout rounds (still use day offsets from a base date)
+  const groupStageStart = new Date('2026-06-11T15:00:00Z');
   // dateOffset = days from groupStageStart; spacing = days between consecutive matches in same stage
   const knockoutStages = [
     { stage: 'round_of_32', stage_ar: 'دور الـ 32', count: 16, dateOffset: 17, spacing: 0.375 }, // Jun 28 – Jul 3
