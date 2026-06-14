@@ -1,7 +1,18 @@
+const crypto = require('crypto');
 const { getStore, connectLambda } = require('@netlify/blobs');
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
 const TG_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+
+// Max body size: 64 KB
+const MAX_BODY_BYTES = 64 * 1024;
+
+// Telegram chat IDs are signed 64-bit ints; message IDs are positive ints.
+// Both fit safely in JS numbers within this range.
+function isTelegramId(v) {
+  return Number.isInteger(v) && Math.abs(v) <= 2 ** 53;
+}
 
 async function sendMessage(chatId, text) {
   await fetch(`${TG_API}/sendMessage`, {
@@ -13,8 +24,28 @@ async function sendMessage(chatId, text) {
 
 exports.handler = async (event, context) => {
   connectLambda(event);
+
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
+  }
+
+  // Reject oversized payloads before parsing
+  const bodyBytes = Buffer.byteLength(event.body || '', 'utf8');
+  if (bodyBytes > MAX_BODY_BYTES) {
+    return { statusCode: 413, body: 'Payload Too Large' };
+  }
+
+  // Verify Telegram webhook secret (constant-time compare to prevent timing attacks)
+  if (WEBHOOK_SECRET) {
+    const got = event.headers['x-telegram-bot-api-secret-token'] || '';
+    let valid = false;
+    try {
+      valid = crypto.timingSafeEqual(Buffer.from(got), Buffer.from(WEBHOOK_SECRET));
+    } catch {
+      // timingSafeEqual throws if buffers differ in length
+      valid = false;
+    }
+    if (!valid) return { statusCode: 401, body: 'Unauthorized' };
   }
 
   let update;
@@ -27,9 +58,14 @@ exports.handler = async (event, context) => {
   const msg = update.message || update.edited_message;
   if (!msg) return { statusCode: 200, body: 'ok' };
 
+  // Validate IDs before using them as blob key segments
+  if (!isTelegramId(msg.chat?.id) || !isTelegramId(msg.message_id)) {
+    return { statusCode: 400, body: 'Bad Request' };
+  }
+
   const store = getStore('telegram-messages');
 
-  // Build the record
+  // Whitelist only the fields we actually need (drop raw msg)
   const record = {
     id: msg.message_id,
     chat_id: msg.chat.id,
@@ -44,25 +80,21 @@ exports.handler = async (event, context) => {
       : null,
     text: msg.text || null,
     date: new Date(msg.date * 1000).toISOString(),
-    raw: msg,
   };
 
-  // Save to Netlify Blobs as JSON (key: chatId/messageId)
   const key = `${msg.chat.id}/${msg.message_id}`;
   await store.setJSON(key, record);
 
-  // Also maintain a running log per chat
+  // Maintain a running log per chat (capped at 1000 entries)
   const logKey = `logs/${msg.chat.id}`;
   let log = [];
   try {
     log = await store.get(logKey, { type: 'json' }) || [];
   } catch {}
   log.push(record);
-  // Keep last 1000 messages per chat
   if (log.length > 1000) log = log.slice(-1000);
   await store.setJSON(logKey, log);
 
-  // Acknowledge in Telegram
   await sendMessage(msg.chat.id, `✅ تم حفظ رسالتك:\n"${msg.text || '(no text)'}"\n🕐 ${record.date}`);
 
   return { statusCode: 200, body: 'ok' };

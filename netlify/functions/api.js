@@ -62,26 +62,29 @@ function authenticate(req, res, next) {
 }
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
+const USERNAME_RE = /^[a-zA-Z0-9_]{3,32}$/;
+
 app.post('/api/auth/register', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password)
     return res.status(400).json({ error: 'اسم المستخدم وكلمة المرور مطلوبان' });
-  if (username.length < 3)
-    return res.status(400).json({ error: 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل' });
+  if (!USERNAME_RE.test(username))
+    return res.status(400).json({ error: 'اسم المستخدم يجب أن يكون 3-32 حرفاً (أحرف، أرقام، _)' });
   if (password.length < 6)
     return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' });
 
   const { users } = stores();
-  const existing = await users.get(`by_username/${username}`, { type: 'json' }).catch(() => null);
-  if (existing) return res.status(409).json({ error: 'اسم المستخدم موجود مسبقاً' });
-
-  // Use UUID to avoid race-condition ID collisions
   const id = randomUUID();
   const hash = await bcrypt.hash(password, 12);
   const user = { id, username, password_hash: hash, points: 0, is_admin: 0 };
 
-  // Write username index first — if this fails we haven't committed anything
-  await users.setJSON(`by_username/${username}`, user);
+  // Atomic create-if-absent: onlyIfNew rejects if the key already exists,
+  // eliminating the check-then-write race condition.
+  try {
+    await users.setJSON(`by_username/${username}`, user, { onlyIfNew: true });
+  } catch {
+    return res.status(409).json({ error: 'اسم المستخدم موجود مسبقاً' });
+  }
   await users.setJSON(`by_id/${id}`, user);
 
   const token = jwt.sign({ id, username, is_admin: false }, JWT_SECRET, { expiresIn: '7d' });
