@@ -77,7 +77,7 @@ app.post('/api/auth/register', async (req, res) => {
   const { users } = stores();
   const id = randomUUID();
   const hash = await bcrypt.hash(password, 12);
-  const user = { id, username, password_hash: hash, points: 0, is_admin: 0 };
+  const user = { id, username, password_hash: hash, points: 0, is_admin: 0, created_at: new Date().toISOString() };
 
   // Atomic create-if-absent: onlyIfNew rejects if the key already exists,
   // eliminating the check-then-write race condition.
@@ -217,13 +217,16 @@ app.post('/api/predictions', authenticate, async (req, res) => {
   const predKey = `${req.user.id}/${match_id}`;
   const existing = await predictions.get(predKey, { type: 'json' }).catch(() => null);
 
+  const now = new Date().toISOString();
   const pred = {
     id: existing?.id ?? randomUUID(),
     user_id: req.user.id,
-    match_id, // always stored as integer
+    match_id,
     home_score,
     away_score,
     points_earned: null,
+    created_at: existing?.created_at ?? now,
+    updated_at: now,
   };
   await predictions.setJSON(predKey, pred);
 
