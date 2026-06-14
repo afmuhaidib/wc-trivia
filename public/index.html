@@ -2,14 +2,15 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="كأس العالم" />
+    <meta name="theme-color" content="#006633" />
     <title>كأس العالم 2026 - توقع النتائج</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -18,31 +19,25 @@
       <div class="header-inner">
         <div class="logo">
           <span class="logo-icon">⚽</span>
-          <div>
+          <div class="logo-text">
             <div class="logo-title">كأس العالم 2026</div>
-            <div class="logo-sub">توقع النتائج وتنافس مع الأصدقاء</div>
+            <div class="logo-sub">توقع وتنافس</div>
           </div>
         </div>
-        <nav class="nav">
-          <button class="nav-btn active" data-page="matches" onclick="showPage('matches')">
-            <span>🏟️</span> المباريات
-          </button>
-          <button class="nav-btn" data-page="predictions" onclick="showPage('predictions')">
-            <span>📋</span> توقعاتي
-          </button>
-          <button class="nav-btn" data-page="leaderboard" onclick="showPage('leaderboard')">
-            <span>🏆</span> لوحة الصدارة
-          </button>
+        <nav class="desktop-nav">
+          <button class="bnav-btn" data-page="matches" onclick="showPage('matches')">🏟️ المباريات</button>
+          <button class="bnav-btn" data-page="predictions" onclick="showPage('predictions')">📋 توقعاتي</button>
+          <button class="bnav-btn" data-page="leaderboard" onclick="showPage('leaderboard')">🏆 الصدارة</button>
         </nav>
         <div class="auth-area">
           <div id="user-info" class="user-info hidden">
             <span class="user-avatar" id="user-avatar">م</span>
             <span id="user-name"></span>
-            <button class="btn-ghost btn-sm" onclick="logout()">خروج</button>
+            <button class="btn btn-ghost btn-sm" onclick="logout()">خروج</button>
           </div>
           <div id="auth-buttons" class="auth-buttons">
-            <button class="btn btn-ghost" onclick="openModal('login')">دخول</button>
-            <button class="btn btn-primary" onclick="openModal('register')">إنشاء حساب</button>
+            <button class="btn btn-ghost btn-sm" onclick="openModal('login')">دخول</button>
+            <button class="btn btn-primary btn-sm" onclick="openModal('register')">إنشاء حساب</button>
           </div>
         </div>
       </div>
@@ -51,37 +46,33 @@
     <!-- Hero Banner -->
     <div class="hero" id="hero-banner">
       <div class="hero-content">
-        <div class="hero-badge">🇺🇸 🇨🇦 🇲🇽 | يونيو - يوليو 2026</div>
+        <div class="hero-badge">🇺🇸 🇨🇦 🇲🇽 &nbsp;|&nbsp; يونيو - يوليو 2026</div>
         <h1 class="hero-title">توقّع النتائج وكن الأفضل</h1>
-        <p class="hero-desc">
-          توقع نتائج مباريات كأس العالم، اجمع النقاط، وتنافس مع اللاعبين حول العالم
-        </p>
         <div class="hero-points-guide">
           <div class="point-card">
             <span class="point-icon">🎯</span>
-            <div class="point-val">5 نقاط</div>
-            <div class="point-label">النتيجة الصحيحة</div>
+            <div class="point-val">5</div>
+            <div class="point-label">نتيجة صحيحة</div>
           </div>
           <div class="point-card">
             <span class="point-icon">✅</span>
-            <div class="point-val">1 نقطة</div>
-            <div class="point-label">الفائز الصحيح</div>
+            <div class="point-val">1</div>
+            <div class="point-label">فائز صحيح</div>
           </div>
           <div class="point-card">
             <span class="point-icon">❌</span>
-            <div class="point-val">0 نقطة</div>
-            <div class="point-label">توقع خاطئ</div>
+            <div class="point-val">0</div>
+            <div class="point-label">خاطئ</div>
           </div>
         </div>
-        <div class="hero-stats" id="hero-stats">
+        <div class="hero-stats">
           <div class="stat-item"><span id="stat-users">--</span> لاعب</div>
           <div class="stat-sep">•</div>
           <div class="stat-item"><span id="stat-predictions">--</span> توقع</div>
           <div class="stat-sep">•</div>
-          <div class="stat-item"><span id="stat-matches">0</span> مباراة منتهية</div>
+          <div class="stat-item"><span id="stat-matches">0</span> منتهية</div>
         </div>
       </div>
-      <div class="hero-ball">⚽</div>
     </div>
 
     <!-- Main Content -->
@@ -89,21 +80,27 @@
       <!-- Matches Page -->
       <section id="page-matches" class="page active">
         <div class="section-header">
-          <h2 class="section-title">مباريات كأس العالم 2026</h2>
+          <h2 class="section-title">المباريات</h2>
           <div class="filters">
-            <select class="filter-select" id="stage-filter" onchange="filterMatches()">
-              <option value="">جميع المراحل</option>
-              <option value="group">دور المجموعات</option>
-              <option value="round_of_32">دور الـ 32</option>
-              <option value="round_of_16">دور الـ 16</option>
-              <option value="quarter_final">ربع النهائي</option>
-              <option value="semi_final">نصف النهائي</option>
-              <option value="third_place">المركز الثالث</option>
-              <option value="final">النهائي</option>
-            </select>
-            <select class="filter-select" id="group-filter" onchange="filterMatches()">
-              <option value="">جميع المجموعات</option>
-            </select>
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="search" id="country-search" class="search-input" placeholder="ابحث عن منتخب..." oninput="filterMatches()" autocorrect="off" autocapitalize="none" />
+            </div>
+            <div class="filter-row">
+              <select class="filter-select" id="stage-filter" onchange="filterMatches()">
+                <option value="">جميع المراحل</option>
+                <option value="group">دور المجموعات</option>
+                <option value="round_of_32">دور الـ 32</option>
+                <option value="round_of_16">دور الـ 16</option>
+                <option value="quarter_final">ربع النهائي</option>
+                <option value="semi_final">نصف النهائي</option>
+                <option value="third_place">المركز الثالث</option>
+                <option value="final">النهائي</option>
+              </select>
+              <select class="filter-select" id="group-filter" onchange="filterMatches()">
+                <option value="">جميع المجموعات</option>
+              </select>
+            </div>
           </div>
         </div>
         <div id="matches-container" class="matches-grid"></div>
@@ -132,12 +129,28 @@
       </section>
     </main>
 
-    <!-- Auth Modal -->
+    <!-- Bottom Nav Bar -->
+    <nav class="bottom-nav">
+      <button class="bnav-btn active" data-page="matches" onclick="showPage('matches')">
+        <span class="bnav-icon">🏟️</span>
+        <span class="bnav-label">المباريات</span>
+      </button>
+      <button class="bnav-btn" data-page="predictions" onclick="showPage('predictions')">
+        <span class="bnav-icon">📋</span>
+        <span class="bnav-label">توقعاتي</span>
+      </button>
+      <button class="bnav-btn" data-page="leaderboard" onclick="showPage('leaderboard')">
+        <span class="bnav-icon">🏆</span>
+        <span class="bnav-label">الصدارة</span>
+      </button>
+    </nav>
+
+    <!-- Auth Modal (bottom sheet on mobile) -->
     <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
       <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
         <button class="modal-close" onclick="closeModal()">✕</button>
 
-        <!-- Login Form -->
         <div id="modal-login">
           <div class="modal-header">
             <div class="modal-icon">🔑</div>
@@ -146,7 +159,7 @@
           <form onsubmit="login(event)">
             <div class="form-group">
               <label>اسم المستخدم</label>
-              <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" required autocomplete="username" />
+              <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" required autocomplete="username" autocorrect="off" autocapitalize="none" />
             </div>
             <div class="form-group">
               <label>كلمة المرور</label>
@@ -161,7 +174,6 @@
           </p>
         </div>
 
-        <!-- Register Form -->
         <div id="modal-register" class="hidden">
           <div class="modal-header">
             <div class="modal-icon">⭐</div>
@@ -170,11 +182,11 @@
           <form onsubmit="register(event)">
             <div class="form-group">
               <label>اسم المستخدم</label>
-              <input type="text" id="reg-username" placeholder="اختر اسم مستخدم (3 أحرف على الأقل)" required minlength="3" autocomplete="username" />
+              <input type="text" id="reg-username" placeholder="اختر اسم مستخدم (3 أحرف)" required minlength="3" autocomplete="username" autocorrect="off" autocapitalize="none" />
             </div>
             <div class="form-group">
               <label>كلمة المرور</label>
-              <input type="password" id="reg-password" placeholder="كلمة مرور قوية (6 أحرف على الأقل)" required minlength="6" autocomplete="new-password" />
+              <input type="password" id="reg-password" placeholder="6 أحرف على الأقل" required minlength="6" autocomplete="new-password" />
             </div>
             <div class="form-group">
               <label>تأكيد كلمة المرور</label>
@@ -184,16 +196,17 @@
             <button type="submit" class="btn btn-primary btn-full" id="reg-submit">إنشاء الحساب</button>
           </form>
           <p class="modal-switch">
-            لديك حساب بالفعل؟
+            لديك حساب؟
             <button class="link-btn" onclick="switchModal('login')">تسجيل الدخول</button>
           </p>
         </div>
       </div>
     </div>
 
-    <!-- Prediction Modal -->
+    <!-- Prediction Modal (bottom sheet on mobile) -->
     <div class="modal-overlay" id="pred-modal-overlay" onclick="closePredModal()">
       <div class="modal pred-modal" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
         <button class="modal-close" onclick="closePredModal()">✕</button>
         <div class="pred-modal-header">
           <span class="pred-modal-stage" id="pm-stage"></span>
@@ -213,13 +226,13 @@
         <div class="pred-score-inputs">
           <div class="score-input-wrap">
             <button class="score-btn" onclick="changeScore('home', -1)">−</button>
-            <input type="number" id="pred-home-score" value="0" min="0" max="20" class="score-input" />
+            <input type="number" id="pred-home-score" value="0" min="0" max="20" class="score-input" readonly />
             <button class="score-btn" onclick="changeScore('home', 1)">+</button>
           </div>
           <div class="score-colon">:</div>
           <div class="score-input-wrap">
             <button class="score-btn" onclick="changeScore('away', -1)">−</button>
-            <input type="number" id="pred-away-score" value="0" min="0" max="20" class="score-input" />
+            <input type="number" id="pred-away-score" value="0" min="0" max="20" class="score-input" readonly />
             <button class="score-btn" onclick="changeScore('away', 1)">+</button>
           </div>
         </div>

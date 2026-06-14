@@ -1,9 +1,17 @@
+/* ── HTML escape (prevents XSS in innerHTML templates) ─────────────────────── */
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 /* ── State ─────────────────────────────────────────────────────────────────── */
 let token = localStorage.getItem('wc_token');
 let currentUser = localStorage.getItem('wc_user');
 let allMatches = [];
 let myPredictions = {};  // matchId -> prediction
 let currentMatchId = null;
+
+// Detect user timezone once at startup
+const USER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 /* ── Init ──────────────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,6 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (currentUser) {
     loadMyPredictions();
   }
+
+  // Re-render match cards every minute so prediction lock kicks in automatically
+  setInterval(() => {
+    if (allMatches.length) filterMatches();
+  }, 60 * 1000);
 });
 
 /* ── API Helper ────────────────────────────────────────────────────────────── */
@@ -191,13 +204,24 @@ function populateGroupFilter() {
   });
 }
 
+const SAUDI_GROUP = 'H';
+
 function filterMatches() {
   const stage = document.getElementById('stage-filter').value;
   const groupKey = document.getElementById('group-filter').value;
+  const query = (document.getElementById('country-search')?.value || '').trim().toLowerCase();
 
   let filtered = allMatches;
   if (stage) filtered = filtered.filter(m => m.stage === stage);
   if (groupKey) filtered = filtered.filter(m => m.group_key === groupKey);
+  if (query) {
+    filtered = filtered.filter(m =>
+      m.home_team.toLowerCase().includes(query) ||
+      m.away_team.toLowerCase().includes(query) ||
+      m.home_team_ar.includes(query) ||
+      m.away_team_ar.includes(query)
+    );
+  }
 
   renderMatches(filtered);
 }
@@ -209,20 +233,31 @@ function renderMatches(matches) {
     return;
   }
 
-  // Group by group/stage
+  // Group by group_name/stage
   const sections = {};
   matches.forEach(m => {
     const key = m.group_name || m.stage;
-    if (!sections[key]) sections[key] = [];
-    sections[key].push(m);
+    if (!sections[key]) sections[key] = { label: key, group_key: m.group_key, matches: [] };
+    sections[key].matches.push(m);
   });
 
-  container.innerHTML = Object.entries(sections).map(([label, sMatches]) => `
-    <div class="group-section">
-      <div class="group-label">⚽ ${label}</div>
-      ${sMatches.map(renderMatchCard).join('')}
-    </div>
-  `).join('');
+  // Sort sections: Saudi group first, then the rest in their natural order
+  const sectionList = Object.values(sections).sort((a, b) => {
+    if (a.group_key === SAUDI_GROUP) return -1;
+    if (b.group_key === SAUDI_GROUP) return 1;
+    return 0;
+  });
+
+  container.innerHTML = sectionList.map(({ label, group_key, matches: sMatches }) => {
+    const isSaudi = group_key === SAUDI_GROUP;
+    return `
+      <div class="group-section${isSaudi ? ' saudi-group' : ''}">
+        <div class="group-label">
+          ${isSaudi ? '🇸🇦 ' : '⚽ '}${esc(label)}${isSaudi ? ' <span class="saudi-badge">منتخبنا</span>' : ''}
+        </div>
+        ${sMatches.map(renderMatchCard).join('')}
+      </div>`;
+  }).join('');
 }
 
 function renderMatchCard(match) {
@@ -230,12 +265,13 @@ function renderMatchCard(match) {
   const isFinished = match.status === 'finished';
   const isPast = new Date(match.match_date) < new Date();
   const isTBD = match.home_team === 'TBD';
+  const safeId = parseInt(match.id, 10); // numeric, safe for onclick attribute
 
-  const dateStr = formatDate(match.match_date);
+  const dateStr = esc(formatDate(match.match_date));
 
   let scoreDisplay = '';
   if (isFinished) {
-    scoreDisplay = `<div class="match-score-display">${match.home_score} - ${match.away_score}</div>`;
+    scoreDisplay = `<div class="match-score-display">${esc(match.home_score)} - ${esc(match.away_score)}</div>`;
   } else {
     scoreDisplay = `<div class="match-vs">VS</div>`;
   }
@@ -255,22 +291,25 @@ function renderMatchCard(match) {
   } else if (isPast) {
     actionBtn = `<button class="predict-btn" disabled>انتهى وقت التوقع</button>`;
   } else if (myPred) {
-    actionBtn = `<button class="predict-btn predicted" onclick="openPredModal(${match.id})">✏️ تعديل التوقع</button>`;
+    actionBtn = `<button class="predict-btn predicted" onclick="openPredModal(${safeId})">✏️ تعديل التوقع</button>`;
   } else {
-    actionBtn = `<button class="predict-btn" onclick="openPredModal(${match.id})">+ أضف توقعك</button>`;
+    actionBtn = `<button class="predict-btn" onclick="openPredModal(${safeId})">+ أضف توقعك</button>`;
   }
 
   let predTag = '';
   if (myPred) {
-    predTag = `<div class="user-prediction-tag">توقعك: ${myPred.home_score} - ${myPred.away_score}</div>`;
+    predTag = `<div class="user-prediction-tag">توقعك: ${esc(myPred.home_score)} - ${esc(myPred.away_score)}</div>`;
   }
 
+  // match.status is compared to a known set above, safe to use as CSS class
+  const safeStatus = ['upcoming','finished','live'].includes(match.status) ? match.status : 'upcoming';
+
   return `
-    <div class="match-card ${match.status}">
+    <div class="match-card ${safeStatus}">
       <div class="match-team">
-        <div class="team-flag">${match.home_flag}</div>
-        <div class="team-name">${match.home_team_ar}</div>
-        <div class="team-name-en">${match.home_team}</div>
+        <div class="team-flag">${esc(match.home_flag)}</div>
+        <div class="team-name">${esc(match.home_team_ar)}</div>
+        <div class="team-name-en">${esc(match.home_team)}</div>
       </div>
       <div class="match-center">
         <div class="match-date-str">${dateStr}</div>
@@ -282,9 +321,9 @@ function renderMatchCard(match) {
         </div>
       </div>
       <div class="match-team away">
-        <div class="team-flag">${match.away_flag}</div>
-        <div class="team-name">${match.away_team_ar}</div>
-        <div class="team-name-en">${match.away_team}</div>
+        <div class="team-flag">${esc(match.away_flag)}</div>
+        <div class="team-name">${esc(match.away_team_ar)}</div>
+        <div class="team-name-en">${esc(match.away_team)}</div>
       </div>
     </div>
   `;
@@ -327,21 +366,21 @@ function renderMyPredictions() {
     }
 
     const matchResult = p.match_home_score !== null
-      ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:4px">النتيجة: ${p.match_home_score} - ${p.match_away_score}</div>`
+      ? `<div style="font-size:.78rem;color:var(--text-muted);margin-top:4px">النتيجة: ${esc(p.match_home_score)} - ${esc(p.match_away_score)}</div>`
       : '';
 
+    // ptsClass is derived from p.points_earned (a number), safe as CSS class
     return `
       <div class="pred-card ${ptsClass}">
         <div>
-          <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px">${p.group_name} • ${formatDate(p.match_date)}</div>
-          <div style="font-weight:800;font-size:.95rem">${p.home_team_ar} vs ${p.away_team_ar}</div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px">${esc(p.group_name)} • ${esc(formatDate(p.match_date))}</div>
+          <div style="font-weight:800;font-size:.95rem">${esc(p.home_team_ar)} vs ${esc(p.away_team_ar)}</div>
           ${matchResult}
         </div>
         <div>
-          <div class="pred-score-display">${p.home_score} - ${p.away_score}</div>
+          <div class="pred-score-display">${esc(p.home_score)} - ${esc(p.away_score)}</div>
           <div class="pred-label">توقعك</div>
         </div>
-        <div></div>
         ${ptsBadge}
       </div>`;
   }).join('');
@@ -491,17 +530,18 @@ function renderLeaderboard(users) {
 
   const rows = users.map((u, i) => {
     const isMe = u.username === currentUser;
+    // rankClass/rankIcon produce controlled values; username is escaped
     return `
       <div class="lb-row">
         <div class="lb-rank ${rankClass(i)}">${rankIcon(i)}</div>
         <div class="lb-user">
-          <div class="lb-avatar ${rankClass(i)}">${u.username[0].toUpperCase()}</div>
-          <div class="lb-username ${isMe ? 'me' : ''}">${u.username}${isMe ? ' (أنت)' : ''}</div>
+          <div class="lb-avatar ${rankClass(i)}">${esc((u.username[0] || '?').toUpperCase())}</div>
+          <div class="lb-username ${isMe ? 'me' : ''}">${esc(u.username)}${isMe ? ' (أنت)' : ''}</div>
         </div>
-        <div class="lb-points" style="color:var(--green-dark)">${u.points}</div>
-        <div class="lb-stat lb-stat-green">🎯 ${u.exact_scores || 0}</div>
-        <div class="lb-stat">✅ ${u.correct_results || 0}</div>
-        <div class="lb-stat">📋 ${u.total_predictions || 0}</div>
+        <div class="lb-points" style="color:var(--green-dark)">${esc(u.points)}</div>
+        <div class="lb-stat lb-stat-green">🎯 ${esc(u.exact_scores || 0)}</div>
+        <div class="lb-stat">✅ ${esc(u.correct_results || 0)}</div>
+        <div class="lb-stat">📋 ${esc(u.total_predictions || 0)}</div>
       </div>`;
   }).join('');
 
@@ -522,9 +562,9 @@ function renderLeaderboard(users) {
 /* ── Navigation ────────────────────────────────────────────────────────────── */
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  document.querySelector(`[data-page="${name}"]`).classList.add('active');
+  document.querySelectorAll(`[data-page="${name}"]`).forEach(b => b.classList.add('active'));
 
   if (name === 'leaderboard') loadLeaderboard();
   if (name === 'predictions') {
@@ -554,11 +594,16 @@ function showToast(msg, type = '') {
 /* ── Helpers ───────────────────────────────────────────────────────────────── */
 function formatDate(dateStr) {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('ar-SA', {
+  // Explicitly use detected timezone so the label matches the displayed time
+  return d.toLocaleDateString('ar-SA-u-ca-gregory', {
+    timeZone: USER_TZ,
     weekday: 'short',
     day: 'numeric',
     month: 'short',
+    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    hour12: true,
+    timeZoneName: 'short',
   });
 }
