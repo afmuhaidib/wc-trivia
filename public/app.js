@@ -622,6 +622,26 @@ function showToast(msg, type = '') {
 }
 
 /* ── Admin ─────────────────────────────────────────────────────────────────── */
+async function adminSyncScores() {
+  const btn = document.getElementById('sync-btn');
+  const resultEl = document.getElementById('sync-result');
+  btn.disabled = true;
+  btn.textContent = 'جاري المزامنة...';
+  resultEl.classList.add('hidden');
+  try {
+    const data = await api('POST', '/admin/sync-scores', {});
+    resultEl.textContent = `✅ تم تحديث ${data.updated} مباراة — تخطي ${data.skipped}`;
+    resultEl.classList.remove('hidden');
+    await loadMatches();
+  } catch (e) {
+    resultEl.textContent = '❌ ' + e.message;
+    resultEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'مزامنة الآن';
+  }
+}
+
 async function adminAdjustPoints() {
   const username = document.getElementById('admin-username').value.trim();
   const delta = parseInt(document.getElementById('admin-points-delta').value, 10);

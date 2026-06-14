@@ -134,6 +134,13 @@
         <div class="section-header">
           <h2 class="section-title">⚙️ لوحة الإدارة</h2>
         </div>
+        <div class="admin-panel" style="margin-bottom:16px">
+          <h3 class="admin-section-title">🔄 مزامنة النتائج</h3>
+          <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:12px">تحديث نتائج المباريات المنتهية من GitHub تلقائياً</p>
+          <button class="btn btn-primary btn-full" onclick="adminSyncScores()" id="sync-btn">مزامنة الآن</button>
+          <div id="sync-result" class="admin-result hidden"></div>
+        </div>
+
         <div class="admin-panel">
           <h3 class="admin-section-title">تعديل نقاط لاعب</h3>
           <div class="form-group">

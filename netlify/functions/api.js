@@ -418,6 +418,52 @@ app.post('/api/admin/reseed-matches', authenticate, requireAdmin, async (req, re
   res.json({ success: true, seeded });
 });
 
+// Sync scores from openfootball/worldcup.json on GitHub
+const TEAM_NAME_MAP = { 'Turkey': 'Türkiye' };
+function normalizeTeam(name) { return TEAM_NAME_MAP[name] || name; }
+
+app.post('/api/admin/sync-scores', authenticate, requireAdmin, async (req, res) => {
+  const { matches } = stores();
+
+  // Fetch external data
+  const r = await fetch('https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json');
+  if (!r.ok) return res.status(502).json({ error: 'فشل جلب البيانات الخارجية' });
+  const { matches: extMatches } = await r.json();
+
+  // Load all our stored matches into a map keyed by sorted team names for fast lookup
+  const { blobs } = await matches.list();
+  const stored = (await Promise.all(blobs.map(b => matches.get(b.key, { type: 'json' }).catch(() => null)))).filter(Boolean);
+  const byTeams = {};
+  for (const m of stored) {
+    if (m.home_team === 'TBD') continue;
+    const key = [m.home_team, m.away_team].sort().join('|');
+    byTeams[key] = m;
+  }
+
+  let updated = 0, skipped = 0;
+  for (const ext of extMatches) {
+    if (!ext.score?.ft) { skipped++; continue; }
+    const t1 = normalizeTeam(ext.team1);
+    const t2 = normalizeTeam(ext.team2);
+    const key = [t1, t2].sort().join('|');
+    const stored = byTeams[key];
+    if (!stored) { skipped++; continue; }
+    if (stored.status === 'finished') { skipped++; continue; }
+
+    // Determine home/away score order (our team order may differ from external)
+    const homeIsTeam1 = normalizeTeam(ext.team1) === stored.home_team;
+    const homeScore = homeIsTeam1 ? ext.score.ft[0] : ext.score.ft[1];
+    const awayScore = homeIsTeam1 ? ext.score.ft[1] : ext.score.ft[0];
+
+    const updatedMatch = { ...stored, home_score: homeScore, away_score: awayScore, status: 'finished' };
+    await matches.setJSON(String(stored.id), updatedMatch);
+    await recalculatePoints(String(stored.id), homeScore, awayScore);
+    updated++;
+  }
+
+  res.json({ success: true, updated, skipped });
+});
+
 // Adjust user points (add or deduct)
 app.put('/api/admin/users/:username/points', authenticate, requireAdmin, async (req, res) => {
   const { username } = req.params;
