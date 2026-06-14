@@ -62,7 +62,7 @@ function authenticate(req, res, next) {
 }
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
-const USERNAME_RE = /^[a-zA-Z0-9_]{3,32}$/;
+const USERNAME_RE = /^[؀-ۿa-zA-Z0-9_]{3,32}$/;
 
 app.post('/api/auth/register', async (req, res) => {
   const { username, password } = req.body;
