@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(netlify dev)",
+      "Bash(netlify deploy*)",
+      "Bash(netlify blobs:get*)",
+      "Bash(netlify blobs:set*)",
+      "Bash(netlify blobs:list*)",
+      "Bash(netlify logs*)",
+      "Bash(netlify functions*)",
+      "Bash(netlify env*)",
+      "Bash(node *)",
+      "Bash(npm *)",
+      "Bash(curl -s *)",
+      "Bash(curl -X GET *)",
+      "Bash(curl -X POST *wc-af.netlify.app*)",
+      "Bash(curl -X PUT *wc-af.netlify.app*)",
+      "Bash(git status)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git add *)",
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(git pull)",
+      "Bash(git branch*)",
+      "Bash(ls*)",
+      "Bash(cat *)",
+      "Bash(grep*)",
+      "Bash(find . *)",
+      "Bash(echo *)",
+      "Bash(wc *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(netlify sites:delete*)",
+      "Bash(netlify blobs:delete*)"
+    ]
+  }
+}

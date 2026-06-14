@@ -34,6 +34,7 @@ async function api(method, path, body) {
   const opts = {
     method,
     headers: { 'Content-Type': 'application/json' },
+    cache: 'no-store',
   };
   if (token) opts.headers['Authorization'] = 'Bearer ' + token;
   if (body) opts.body = JSON.stringify(body);

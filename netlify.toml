@@ -5,6 +5,11 @@
 [[plugins]]
   package = "./netlify/plugins/seed-matches"
 
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api"
