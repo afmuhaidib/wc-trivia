@@ -751,7 +751,38 @@ function renderUserProfile(data) {
         <div class="commit-sq commit-exact" style="pointer-events:none"></div>
         <span>مثالي</span>
       </div>
-    </div>`;
+    </div>
+    ${predictions.length ? `
+    <div style="margin-top:16px">
+      <div style="font-size:.82rem;font-weight:700;color:var(--text-muted);margin-bottom:8px">التوقعات</div>
+      <div class="profile-pred-list">
+        ${predictions.sort((a,b) => new Date(a.match_date) - new Date(b.match_date)).map(p => {
+          const pts = p.points_earned;
+          const isFinished = p.match_status === 'finished';
+          let rowClass = 'profile-pred-row';
+          let badge = '';
+          if (isFinished && pts !== null) {
+            if (pts === 5)      { rowClass += ' ppr-exact';   badge = `<span class="ppr-badge ppr-badge-exact">🎯 5</span>`; }
+            else if (pts === 1) { rowClass += ' ppr-correct'; badge = `<span class="ppr-badge ppr-badge-correct">✅ 1</span>`; }
+            else                { rowClass += ' ppr-wrong';   badge = `<span class="ppr-badge ppr-badge-wrong">✗ 0</span>`; }
+          } else {
+            badge = `<span class="ppr-badge ppr-badge-pending">⏳</span>`;
+          }
+          const resultStr = isFinished
+            ? `<span class="ppr-result">${esc(p.match_home_score)} - ${esc(p.match_away_score)}</span>`
+            : '';
+          return `
+            <div class="${rowClass}">
+              <div class="ppr-teams">${esc(p.home_flag || '')} ${esc(p.home_team_ar || '')} <span class="ppr-vs">vs</span> ${esc(p.away_team_ar || '')} ${esc(p.away_flag || '')}</div>
+              <div class="ppr-scores">
+                <span class="ppr-pred">${esc(p.home_score)} - ${esc(p.away_score)}</span>
+                ${resultStr}
+              </div>
+              ${badge}
+            </div>`;
+        }).join('')}
+      </div>
+    </div>` : ''}`;
 }
 
 /* ── Helpers ───────────────────────────────────────────────────────────────── */

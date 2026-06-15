@@ -934,6 +934,44 @@ body {
 }
 .commit-legend .commit-sq { width: 12px; height: 12px; flex-shrink: 0; }
 
+/* ── Profile prediction list ──────────────────────────────────────────────── */
+.profile-pred-list { display: flex; flex-direction: column; gap: 6px; }
+
+.profile-pred-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: .82rem;
+  border-right: 3px solid var(--border);
+}
+.ppr-exact   { border-right-color: var(--green-light); background: #edfaf1; }
+.ppr-correct { border-right-color: var(--gold);        background: #fffbeb; }
+.ppr-wrong   { border-right-color: var(--red);         background: #fef2f2; }
+
+.ppr-teams { font-weight: 700; color: var(--text); }
+.ppr-vs    { color: var(--text-muted); font-weight: 400; margin: 0 2px; }
+
+.ppr-scores { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.ppr-pred   { font-weight: 800; color: var(--text); font-size: .85rem; }
+.ppr-result { font-size: .72rem; color: var(--text-muted); }
+
+.ppr-badge {
+  min-width: 40px;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: .78rem;
+}
+.ppr-badge-exact   { background: var(--green-pale); color: var(--green-dark); }
+.ppr-badge-correct { background: #fff8e6;           color: var(--gold-dark); }
+.ppr-badge-wrong   { background: #fde8e8;           color: var(--red); }
+.ppr-badge-pending { background: #f1f5f9;           color: var(--text-muted); }
+
 /* ── Admin Panel ─────────────────────────────────────────────────────────── */
 .admin-panel {
   max-width: 480px;
