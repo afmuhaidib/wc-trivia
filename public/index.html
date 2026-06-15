@@ -32,7 +32,7 @@
         </nav>
         <div class="auth-area">
           <div id="user-info" class="user-info hidden">
-            <span class="user-avatar" id="user-avatar">م</span>
+            <span class="user-avatar" id="user-avatar" onclick="openSettingsModal()" style="cursor:pointer" title="الإعدادات">م</span>
             <span id="user-name"></span>
             <button class="btn btn-ghost btn-sm" onclick="logout()">خروج</button>
           </div>
@@ -214,6 +214,10 @@
           </div>
           <form onsubmit="register(event)">
             <div class="form-group">
+              <label>الاسم الكامل</label>
+              <input type="text" id="reg-display-name" placeholder="اسمك كما تريد أن يظهر" required autocomplete="name" />
+            </div>
+            <div class="form-group">
               <label>اسم المستخدم</label>
               <input type="text" id="reg-username" placeholder="اسم المستخدم (عربي أو إنجليزي)" required minlength="3" autocomplete="username" autocorrect="off" autocapitalize="none" />
             </div>
@@ -273,6 +277,26 @@
         <button class="btn btn-primary btn-full" onclick="submitPrediction()" id="pred-submit">
           💾 حفظ التوقع
         </button>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal-overlay" onclick="closeSettingsModal()">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <button class="modal-close" onclick="closeSettingsModal()">✕</button>
+        <div class="modal-header">
+          <div class="modal-icon">⚙️</div>
+          <h3>إعدادات الحساب</h3>
+        </div>
+        <div class="form-group">
+          <label>الاسم الكامل</label>
+          <input type="text" id="settings-display-name" placeholder="اسمك كما يظهر للآخرين" autocomplete="name" />
+        </div>
+        <div class="form-error hidden" id="settings-error"></div>
+        <div id="settings-success" class="hidden" style="background:#edfaf1;color:var(--green-dark);border-radius:var(--radius-sm);padding:10px 14px;font-size:.88rem;font-weight:600;margin-bottom:14px;"></div>
+        <button class="btn btn-primary btn-full" onclick="saveSettings()">💾 حفظ</button>
+        <button class="btn btn-outline btn-full" style="margin-top:10px" onclick="logout();closeSettingsModal()">تسجيل الخروج</button>
       </div>
     </div>
 

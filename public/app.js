@@ -6,6 +6,7 @@ function esc(s) {
 /* ── State ─────────────────────────────────────────────────────────────────── */
 let token = localStorage.getItem('wc_token');
 let currentUser = localStorage.getItem('wc_user');
+let currentDisplayName = localStorage.getItem('wc_display_name') || currentUser;
 let allMatches = [];
 let myPredictions = {};  // matchId -> prediction
 let currentMatchId = null;
@@ -55,8 +56,8 @@ function updateAuthUI() {
   if (currentUser) {
     userInfo.classList.remove('hidden');
     authBtns.classList.add('hidden');
-    userNameEl.textContent = currentUser;
-    userAvatarEl.textContent = currentUser[0].toUpperCase();
+    userNameEl.textContent = currentDisplayName || currentUser;
+    userAvatarEl.textContent = (currentDisplayName || currentUser)[0].toUpperCase();
   } else {
     userInfo.classList.add('hidden');
     authBtns.classList.remove('hidden');
@@ -73,19 +74,23 @@ function jwtPayload(t) {
   catch { return {}; }
 }
 
-function saveAuth(t, u) {
+function saveAuth(t, u, dn) {
   token = t;
   currentUser = u;
+  currentDisplayName = dn || u;
   localStorage.setItem('wc_token', t);
   localStorage.setItem('wc_user', u);
+  localStorage.setItem('wc_display_name', currentDisplayName);
   updateAuthUI();
 }
 
 function logout() {
   token = null;
   currentUser = null;
+  currentDisplayName = null;
   localStorage.removeItem('wc_token');
   localStorage.removeItem('wc_user');
+  localStorage.removeItem('wc_display_name');
   myPredictions = {};
   updateAuthUI();
   renderMatches(allMatches);
@@ -135,7 +140,7 @@ async function login(e) {
 
   try {
     const data = await api('POST', '/auth/login', { username, password });
-    saveAuth(data.token, data.username);
+    saveAuth(data.token, data.username, data.display_name);
     closeModal();
     showToast('مرحباً ' + data.username + '! 🎉', 'success');
     await loadMyPredictions();
@@ -154,20 +159,20 @@ async function login(e) {
 async function register(e) {
   e.preventDefault();
   const btn = document.getElementById('reg-submit');
+  const displayName = document.getElementById('reg-display-name').value.trim();
   const username = document.getElementById('reg-username').value.trim();
   const password = document.getElementById('reg-password').value;
   const confirm = document.getElementById('reg-confirm').value;
 
-  if (password !== confirm) {
-    return showFormError('reg-error', 'كلمة المرور غير متطابقة');
-  }
+  if (!displayName) return showFormError('reg-error', 'يرجى إدخال اسمك الكامل');
+  if (password !== confirm) return showFormError('reg-error', 'كلمة المرور غير متطابقة');
 
   btn.disabled = true;
   btn.textContent = 'جاري الإنشاء...';
 
   try {
-    const data = await api('POST', '/auth/register', { username, password });
-    saveAuth(data.token, data.username);
+    const data = await api('POST', '/auth/register', { username, password, display_name: displayName });
+    saveAuth(data.token, data.username, data.display_name);
     closeModal();
     showToast('تم إنشاء حسابك بنجاح! 🎉', 'success');
     await loadMyPredictions();
@@ -570,13 +575,13 @@ function renderLeaderboard(users) {
 
   const rows = users.map((u, i) => {
     const isMe = u.username === currentUser;
-    // rankClass/rankIcon produce controlled values; username is escaped
+    const displayName = u.display_name || u.username;
     return `
       <div class="lb-row">
         <div class="lb-rank ${rankClass(i)}">${rankIcon(i)}</div>
         <div class="lb-user">
-          <div class="lb-avatar ${rankClass(i)} lb-avatar-btn" onclick="openUserProfile('${esc(u.username)}')">${esc((u.username[0] || '?').toUpperCase())}</div>
-          <div class="lb-username ${isMe ? 'me' : ''}">${esc(u.username)}${isMe ? ' (أنت)' : ''}</div>
+          <div class="lb-avatar ${rankClass(i)} lb-avatar-btn" onclick="openUserProfile('${esc(u.username)}')">${esc((displayName[0] || '?').toUpperCase())}</div>
+          <div class="lb-username ${isMe ? 'me' : ''}">${esc(displayName)}${isMe ? ' (أنت)' : ''}</div>
         </div>
         <div class="lb-points" style="color:var(--green-dark)">${esc(u.points)}</div>
         <div class="lb-stat lb-stat-green">🎯 ${esc(u.exact_scores || 0)}</div>
@@ -676,6 +681,41 @@ async function adminAdjustPoints() {
   }
 }
 
+/* ── Settings Modal ────────────────────────────────────────────────────────── */
+function openSettingsModal() {
+  if (!currentUser) { openModal('login'); return; }
+  document.getElementById('settings-display-name').value = currentDisplayName || '';
+  document.getElementById('settings-error').classList.add('hidden');
+  document.getElementById('settings-success').classList.add('hidden');
+  document.getElementById('settings-modal-overlay').classList.add('open');
+}
+
+function closeSettingsModal() {
+  document.getElementById('settings-modal-overlay').classList.remove('open');
+}
+
+async function saveSettings() {
+  const displayName = document.getElementById('settings-display-name').value.trim();
+  const errEl = document.getElementById('settings-error');
+  const okEl = document.getElementById('settings-success');
+  errEl.classList.add('hidden');
+  okEl.classList.add('hidden');
+
+  if (!displayName) { errEl.textContent = 'الاسم مطلوب'; errEl.classList.remove('hidden'); return; }
+
+  try {
+    const data = await api('PUT', '/auth/profile', { display_name: displayName });
+    currentDisplayName = data.display_name;
+    localStorage.setItem('wc_display_name', currentDisplayName);
+    updateAuthUI();
+    okEl.textContent = '✅ تم حفظ الاسم بنجاح';
+    okEl.classList.remove('hidden');
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+
 /* ── User Profile Modal ────────────────────────────────────────────────────── */
 function openUserProfile(username) {
   document.getElementById('profile-modal-overlay').classList.add('open');
@@ -696,7 +736,8 @@ function closeProfileModal() {
 }
 
 function renderUserProfile(data) {
-  const { username, points, predictions } = data;
+  const { username, display_name, points, predictions } = data;
+  const displayName = display_name || username;
   const predMap = {};
   predictions.forEach(p => { predMap[p.match_id] = p; });
 
@@ -726,11 +767,12 @@ function renderUserProfile(data) {
     gridHtml += `<div class="${cls}" title="${title}"></div>`;
   }
 
-  const initial = esc((username[0] || '?').toUpperCase());
+  const initial = esc((displayName[0] || '?').toUpperCase());
   document.getElementById('profile-modal-content').innerHTML = `
     <div style="text-align:center;margin-bottom:20px">
       <div style="width:64px;height:64px;background:linear-gradient(135deg,var(--green),var(--green-light));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#fff;margin:0 auto 10px">${initial}</div>
-      <div style="font-weight:900;font-size:1.2rem;margin-bottom:4px">${esc(username)}</div>
+      <div style="font-weight:900;font-size:1.2rem;margin-bottom:4px">${esc(displayName)}</div>
+      ${displayName !== username ? `<div style="font-size:.78rem;color:var(--text-muted)">@${esc(username)}</div>` : ''}
       <div style="color:var(--gold);font-weight:900;font-size:1.5rem">${esc(points)} نقطة</div>
     </div>
     <div class="profile-stats-grid">

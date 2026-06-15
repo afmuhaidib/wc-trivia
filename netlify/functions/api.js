@@ -84,10 +84,11 @@ app.post('/api/auth/register', async (req, res) => {
   if (password.length < 6)
     return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' });
 
+  const { display_name } = req.body;
   const { users, ipLogs } = stores();
   const id = randomUUID();
   const hash = await bcrypt.hash(password, 12);
-  const user = { id, username, password_hash: hash, points: 0, is_admin: 0, created_at: new Date().toISOString() };
+  const user = { id, username, display_name: (display_name || username).slice(0, 64), password_hash: hash, points: 0, is_admin: 0, created_at: new Date().toISOString() };
 
   // Atomic create-if-absent: onlyIfNew rejects if the key already exists,
   // eliminating the check-then-write race condition.
@@ -102,7 +103,7 @@ app.post('/api/auth/register', async (req, res) => {
   ]);
 
   const token = jwt.sign({ id, username, is_admin: false }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token, username });
+  res.json({ token, username, display_name: user.display_name });
 });
 
 app.post('/api/auth/login', async (req, res) => {
@@ -127,7 +128,7 @@ app.post('/api/auth/login', async (req, res) => {
     JWT_SECRET,
     { expiresIn: '7d' }
   );
-  res.json({ token, username: user.username });
+  res.json({ token, username: user.username, display_name: updatedUser.display_name || user.username });
 });
 
 // ── Matches ──────────────────────────────────────────────────────────────────
@@ -305,6 +306,7 @@ app.get('/api/leaderboard', async (req, res) => {
     return {
       id: u.id,
       username: u.username,
+      display_name: u.display_name || u.username,
       points: u.points || 0,
       total_predictions: myPreds.length,
       exact_scores: myPreds.filter((p) => p.points_earned === 5).length,
@@ -498,6 +500,24 @@ app.put('/api/admin/users/:username/points', authenticate, requireAdmin, async (
   res.json({ success: true, username, points: updated.points, delta });
 });
 
+// ── Update own profile ────────────────────────────────────────────────────────
+app.put('/api/auth/profile', authenticate, async (req, res) => {
+  const { display_name } = req.body;
+  if (!display_name || typeof display_name !== 'string' || !display_name.trim())
+    return res.status(400).json({ error: 'الاسم مطلوب' });
+
+  const { users } = stores();
+  const user = await users.get(`by_id/${req.user.id}`, { type: 'json' }).catch(() => null);
+  if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
+
+  const updated = { ...user, display_name: display_name.trim().slice(0, 64) };
+  await Promise.all([
+    users.setJSON(`by_id/${req.user.id}`, updated),
+    users.setJSON(`by_username/${user.username}`, updated),
+  ]);
+  res.json({ success: true, display_name: updated.display_name });
+});
+
 // ── Public user profile (predictions for any user) ───────────────────────────
 app.get('/api/users/:username/predictions', async (req, res) => {
   const { username } = req.params;
@@ -534,7 +554,7 @@ app.get('/api/users/:username/predictions', async (req, res) => {
     })
   );
 
-  res.json({ username: user.username, points: user.points || 0, predictions: enriched });
+  res.json({ username: user.username, display_name: user.display_name || user.username, points: user.points || 0, predictions: enriched });
 });
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
