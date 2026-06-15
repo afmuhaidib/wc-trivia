@@ -199,7 +199,7 @@ async function recalculatePoints(matchId, homeScore, awayScore) {
   }
 
   // Write prediction results
-  await Promise.all(predUpdates.map((p) => predictions.setJSON(String(p.id), p)));
+  await Promise.all(predUpdates.map((p) => predictions.setJSON(`${p.user_id}/${p.match_id}`, p)));
 
   // Write user point updates (one read+write per unique user)
   for (const [userId, delta] of Object.entries(userDeltas)) {
