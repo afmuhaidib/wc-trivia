@@ -1,0 +1,928 @@
+{
+  "date": "2026-06-15",
+  "users": [
+    {
+      "id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "username": "af9",
+      "points": 0,
+      "is_admin": 1,
+      "last_login_at": "2026-06-14T19:34:37.917Z",
+      "display_name": "ممملك التوقعات"
+    },
+    {
+      "id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "username": "almuhaidib",
+      "points": 1,
+      "is_admin": 1
+    },
+    {
+      "id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "username": "الليبرو",
+      "points": 0,
+      "is_admin": 0,
+      "created_at": "2026-06-14T19:37:57.174Z"
+    },
+    {
+      "id": "f9c3c2f2-2cc6-4f46-bb96-b22edd9cdcb7",
+      "username": "فتى",
+      "display_name": "فتى الحوطه",
+      "points": 0,
+      "is_admin": 0,
+      "created_at": "2026-06-15T19:02:03.547Z"
+    }
+  ],
+  "predictions": [
+    {
+      "id": "cd603e77-9668-4a92-8097-81096bafbb17",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 10,
+      "home_score": 1,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:40:55.138Z",
+      "updated_at": "2026-06-14T19:40:55.138Z"
+    },
+    {
+      "id": "3a8843cc-a6fa-420d-9c3a-19be905cf1cd",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 11,
+      "home_score": 1,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:41:30.487Z",
+      "updated_at": "2026-06-14T19:41:30.487Z"
+    },
+    {
+      "id": "e575d0e9-e226-4c5a-82c1-69d80df3745e",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 12,
+      "home_score": 1,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:41:39.238Z",
+      "updated_at": "2026-06-14T19:41:39.238Z"
+    },
+    {
+      "id": "a0cbf31b-f1d8-4e20-a15e-28212d577070",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 21,
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:41:56.310Z",
+      "updated_at": "2026-06-14T19:41:56.310Z"
+    },
+    {
+      "id": "879588a5-6451-4f7d-9033-6ffc4321d0f3",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 22,
+      "home_score": 1,
+      "away_score": 3,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:42:05.604Z",
+      "updated_at": "2026-06-14T19:42:05.604Z"
+    },
+    {
+      "id": "36991b59-4130-4cc6-9eca-84816309d467",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 23,
+      "home_score": 1,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:42:19.065Z",
+      "updated_at": "2026-06-14T19:42:19.065Z"
+    },
+    {
+      "id": "87455865-19b0-406c-86fe-afbdf9a74760",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 24,
+      "home_score": 1,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:42:28.704Z",
+      "updated_at": "2026-06-14T19:42:28.704Z"
+    },
+    {
+      "id": "44f86ec8-896e-4e8f-9c75-2603c3290d99",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 43,
+      "home_score": 4,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:39:10.783Z",
+      "updated_at": "2026-06-14T19:39:10.783Z"
+    },
+    {
+      "id": "a89fa1d5-9f7a-4627-adf0-38d4ff611c00",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 44,
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:39:23.367Z",
+      "updated_at": "2026-06-14T19:39:23.367Z"
+    },
+    {
+      "id": "7af41b40-15e0-4eb2-a7c3-d8a99c33cc62",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 45,
+      "home_score": 4,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:39:47.289Z",
+      "updated_at": "2026-06-14T19:39:47.289Z"
+    },
+    {
+      "id": "f8152590-d564-4ea8-b566-3415a4d1ec95",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 46,
+      "home_score": 0,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:40:05.048Z",
+      "updated_at": "2026-06-14T19:40:05.048Z"
+    },
+    {
+      "id": "f5401460-cbde-4391-afec-4c3a09b8afcc",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 47,
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:40:15.489Z",
+      "updated_at": "2026-06-14T19:40:15.489Z"
+    },
+    {
+      "id": "77e77298-4001-43af-bbfe-f5312a9748f4",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 48,
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:40:24.314Z",
+      "updated_at": "2026-06-14T19:40:24.314Z"
+    },
+    {
+      "id": "1960755d-2dd1-4ad3-88b5-c1fb3c7d3003",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 9,
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:41:07.655Z",
+      "updated_at": "2026-06-14T19:41:07.655Z"
+    },
+    {
+      "id": "0d34d3db-1c80-447b-bcbd-6d16dc18a7f9",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 10,
+      "home_score": 2,
+      "away_score": 0,
+      "points_earned": null
+    },
+    {
+      "id": "a414af6e-e9ac-4c27-8893-d59562bd61bc",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 11,
+      "home_score": 0,
+      "away_score": 0,
+      "points_earned": null
+    },
+    {
+      "id": "e8ba50fe-b92e-41c1-8eb4-56f3fc946d0e",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 12,
+      "home_score": 0,
+      "away_score": 1,
+      "points_earned": null
+    },
+    {
+      "id": "012f01d9-d9ff-4f8f-8df6-ccef4049072a",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 3,
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null
+    },
+    {
+      "id": "6a46c153-59fb-4231-949a-a42e8b5d45f7",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 31,
+      "home_score": 1,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:25:33.827Z",
+      "updated_at": "2026-06-14T19:27:12.656Z"
+    },
+    {
+      "id": "401a1192-fe94-4c1c-9ab5-bd1285d497f5",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 4,
+      "home_score": 0,
+      "away_score": 2,
+      "points_earned": null
+    },
+    {
+      "id": "7d8a5735-adc5-4638-a6ef-4ca9849ef424",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 43,
+      "home_score": 3,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:25:25.017Z",
+      "updated_at": "2026-06-14T19:25:25.017Z"
+    },
+    {
+      "id": "31ddfd57-bc20-4d34-8e48-907a074a0feb",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 44,
+      "home_score": 1,
+      "away_score": 1,
+      "points_earned": null
+    },
+    {
+      "id": "f5b1f91d-b1d5-4110-80ac-52b4a195fe9a",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 45,
+      "home_score": 2,
+      "away_score": 0,
+      "points_earned": null
+    },
+    {
+      "id": "c50dc3d8-2882-4635-8495-f466dc21a568",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 46,
+      "home_score": 1,
+      "away_score": 2,
+      "points_earned": null
+    },
+    {
+      "id": "ebcbf46c-c6c0-47c3-a5dd-8dff3b961822",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 47,
+      "home_score": 3,
+      "away_score": 2,
+      "points_earned": null
+    },
+    {
+      "id": "c6ae8352-5948-44d7-958f-d572c9fcd742",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 48,
+      "home_score": 1,
+      "away_score": 1,
+      "points_earned": null
+    },
+    {
+      "id": "c1954a26-3705-4780-aacb-fefc3bdf5d72",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 5,
+      "home_score": 3,
+      "away_score": 1,
+      "points_earned": null
+    },
+    {
+      "id": "aad197dd-cc8d-463d-b4be-14bbba8f95eb",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 6,
+      "home_score": 0,
+      "away_score": 2,
+      "points_earned": null
+    },
+    {
+      "id": "d817ef26-6fed-4ae0-af65-17d09d77408f",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 9,
+      "home_score": 0,
+      "away_score": 2,
+      "points_earned": null
+    },
+    {
+      "id": "44f86ec8-896e-4e8f-9c75-2603c3290d99",
+      "user_id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
+      "match_id": 43,
+      "home_score": 4,
+      "away_score": 0,
+      "points_earned": 0,
+      "created_at": "2026-06-14T19:39:10.783Z",
+      "updated_at": "2026-06-14T19:39:10.783Z"
+    },
+    {
+      "id": "499cbfff-0129-4e9f-bd0c-15a6a3f918fa",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 10,
+      "home_score": 1,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T16:42:25.652Z",
+      "updated_at": "2026-06-14T16:42:25.652Z"
+    },
+    {
+      "id": "6adf54ff-8f48-44cd-87fe-a250c5b088ea",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 11,
+      "home_score": 1,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:44:45.016Z",
+      "updated_at": "2026-06-15T05:44:45.016Z"
+    },
+    {
+      "id": "ab846dcb-78ab-446f-a904-c3c1b01c84dd",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 12,
+      "home_score": 3,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:44:51.382Z",
+      "updated_at": "2026-06-15T05:44:51.382Z"
+    },
+    {
+      "id": "79ed6689-8314-47fc-965e-2844098241b8",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 15,
+      "home_score": 5,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:45:48.813Z",
+      "updated_at": "2026-06-15T05:45:48.813Z"
+    },
+    {
+      "id": "e278f772-44a3-440e-b4a9-e5204d6dfe66",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 16,
+      "home_score": 3,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:45:38.522Z",
+      "updated_at": "2026-06-15T05:45:38.522Z"
+    },
+    {
+      "id": "22975dac-cd6d-4b51-a7e0-91734da20db6",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 17,
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:46:02.318Z",
+      "updated_at": "2026-06-15T05:46:02.318Z"
+    },
+    {
+      "id": "cb3e5142-29ba-40a7-ba9b-5f9f8979d262",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 18,
+      "home_score": 1,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:46:06.733Z",
+      "updated_at": "2026-06-15T05:46:06.733Z"
+    },
+    {
+      "id": "4d28746f-35a2-470e-9f9b-ff79c96be8d8",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 21,
+      "home_score": 1,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:45:03.783Z",
+      "updated_at": "2026-06-15T05:45:03.783Z"
+    },
+    {
+      "id": "8f1e9ca9-4ea9-4d53-bc83-b4e05d293b18",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 22,
+      "home_score": 0,
+      "away_score": 3,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:45:16.976Z",
+      "updated_at": "2026-06-15T05:45:16.976Z"
+    },
+    {
+      "id": "e15e8b8f-a1a4-4f4d-adc1-f82dc128fb1a",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 23,
+      "home_score": 0,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-14T16:43:04.399Z",
+      "updated_at": "2026-06-14T16:43:04.399Z"
+    },
+    {
+      "id": "34526b23-5ed4-4634-bf84-1809816b5eec",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 24,
+      "home_score": 2,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:45:26.963Z",
+      "updated_at": "2026-06-15T05:45:26.963Z"
+    },
+    {
+      "id": "b32b7203-dfef-4f6b-b474-0bcf06ae40a3",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 27,
+      "home_score": 4,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:46:16.922Z",
+      "updated_at": "2026-06-15T05:46:16.922Z"
+    },
+    {
+      "id": "991aed74-77b4-47ab-af77-e518a34bb3b1",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 28,
+      "home_score": 0,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:46:22.672Z",
+      "updated_at": "2026-06-15T05:46:22.672Z"
+    },
+    {
+      "id": "32fe1237-12c1-41de-833d-4b8ba9a91b62",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 29,
+      "home_score": 3,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:46:38.481Z",
+      "updated_at": "2026-06-15T05:46:38.481Z"
+    },
+    {
+      "id": "509203ad-3cf8-4f6d-a3ea-a41268446686",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 3,
+      "home_score": 3,
+      "away_score": 4,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:44:10.923Z",
+      "updated_at": "2026-06-15T05:44:10.923Z"
+    },
+    {
+      "id": "bbeef25c-9ccf-4b70-b028-036545d479d2",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 30,
+      "home_score": 0,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:46:41.228Z",
+      "updated_at": "2026-06-15T05:46:41.228Z"
+    },
+    {
+      "id": "cb7475d4-dc02-45aa-bdbd-41498e88f242",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 31,
+      "home_score": 3,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:34:54.398Z",
+      "updated_at": "2026-06-14T19:35:04.306Z"
+    },
+    {
+      "id": "67df32ed-93d3-42d9-8b70-886e84518d1c",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 33,
+      "home_score": 3,
+      "away_score": 4,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:46:57.710Z",
+      "updated_at": "2026-06-15T05:46:57.710Z"
+    },
+    {
+      "id": "f907a3bb-7ff4-45b1-84e6-874561669009",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 34,
+      "home_score": 2,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:47:11.491Z",
+      "updated_at": "2026-06-15T05:47:11.491Z"
+    },
+    {
+      "id": "01513341-6878-4544-aaa8-a622f1bb0a3f",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 35,
+      "home_score": 0,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:47:18.264Z",
+      "updated_at": "2026-06-15T05:47:18.264Z"
+    },
+    {
+      "id": "de8ce75d-2c4f-4aec-993e-51ea60b2e067",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 36,
+      "home_score": 1,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:47:32.883Z",
+      "updated_at": "2026-06-15T05:47:32.883Z"
+    },
+    {
+      "id": "8d254eb0-14c7-4e8c-8876-742bf6bbce70",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 37,
+      "home_score": 3,
+      "away_score": 2,
+      "points_earned": null,
+      "created_at": "2026-06-15T14:12:16.056Z",
+      "updated_at": "2026-06-15T14:12:16.056Z"
+    },
+    {
+      "id": "c2e581fe-f5b7-496d-8013-a2f5ecbe20a3",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 4,
+      "home_score": 0,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:43:58.457Z",
+      "updated_at": "2026-06-15T05:43:58.457Z"
+    },
+    {
+      "id": "87151fcb-c2b7-48fc-a3b3-b02cee699e98",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 43,
+      "home_score": 2,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:42:26.827Z",
+      "updated_at": "2026-06-14T19:42:26.827Z"
+    },
+    {
+      "id": "77f6bace-5bdf-4c02-baf5-c9ac33661835",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 44,
+      "home_score": 1,
+      "away_score": 2,
+      "points_earned": null
+    },
+    {
+      "id": "c58f7d9f-4c8b-4354-b5bb-82703c53d61e",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 45,
+      "home_score": 3,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T16:43:23.349Z",
+      "updated_at": "2026-06-14T16:43:23.349Z"
+    },
+    {
+      "id": "b8095486-7631-4698-b309-2cbad7327770",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 46,
+      "home_score": 0,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T19:42:43.519Z",
+      "updated_at": "2026-06-14T19:42:43.519Z"
+    },
+    {
+      "id": "8d059115-5fc0-405b-82a0-6c40a83ebdc6",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 47,
+      "home_score": 2,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:43:49.595Z",
+      "updated_at": "2026-06-15T05:43:49.595Z"
+    },
+    {
+      "id": "6f48e884-e14b-40a2-bf23-bf7211b799cf",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 48,
+      "home_score": 1,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T14:12:40.785Z",
+      "updated_at": "2026-06-15T14:12:40.785Z"
+    },
+    {
+      "id": "9bd71102-81cb-4a3b-9fee-f1e6cc252443",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 5,
+      "home_score": 2,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:44:18.611Z",
+      "updated_at": "2026-06-15T05:44:18.611Z"
+    },
+    {
+      "id": "111c48da-dbab-4345-9368-c5de7a2b848b",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 6,
+      "home_score": 0,
+      "away_score": 3,
+      "points_earned": null,
+      "created_at": "2026-06-15T05:44:29.983Z",
+      "updated_at": "2026-06-15T05:44:29.983Z"
+    },
+    {
+      "id": "c66cda45-d35f-465e-9968-1bb508f1876a",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 9,
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-14T16:42:00.769Z",
+      "updated_at": "2026-06-14T16:42:00.769Z"
+    },
+    {
+      "id": "6a46c153-59fb-4231-949a-a42e8b5d45f7",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 31,
+      "home_score": 1,
+      "away_score": 1,
+      "points_earned": 1,
+      "created_at": "2026-06-14T19:25:33.827Z",
+      "updated_at": "2026-06-14T19:27:12.656Z"
+    },
+    {
+      "id": "7d8a5735-adc5-4638-a6ef-4ca9849ef424",
+      "user_id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
+      "match_id": 43,
+      "home_score": 3,
+      "away_score": 0,
+      "points_earned": 0,
+      "created_at": "2026-06-14T19:25:25.017Z",
+      "updated_at": "2026-06-14T19:25:25.017Z"
+    },
+    {
+      "id": "87151fcb-c2b7-48fc-a3b3-b02cee699e98",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 43,
+      "home_score": 2,
+      "away_score": 0,
+      "points_earned": 0,
+      "created_at": "2026-06-14T19:42:26.827Z",
+      "updated_at": "2026-06-14T19:42:26.827Z"
+    },
+    {
+      "id": "cb7475d4-dc02-45aa-bdbd-41498e88f242",
+      "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
+      "match_id": 31,
+      "home_score": 3,
+      "away_score": 2,
+      "points_earned": 0,
+      "created_at": "2026-06-14T19:34:54.398Z",
+      "updated_at": "2026-06-14T19:35:04.306Z"
+    },
+    {
+      "id": "076fc380-bb07-4a01-90f8-421b2533ca4e",
+      "user_id": "f9c3c2f2-2cc6-4f46-bb96-b22edd9cdcb7",
+      "match_id": 44,
+      "home_score": 0,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T19:02:19.466Z",
+      "updated_at": "2026-06-15T19:02:19.466Z"
+    },
+    {
+      "id": "071ddae0-553c-41c0-8c4c-a34d5e19da73",
+      "user_id": "f9c3c2f2-2cc6-4f46-bb96-b22edd9cdcb7",
+      "match_id": 45,
+      "home_score": 1,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T19:02:33.583Z",
+      "updated_at": "2026-06-15T19:02:33.583Z"
+    },
+    {
+      "id": "e9062b8a-8a55-41ed-bede-4e2bcfbd26db",
+      "user_id": "f9c3c2f2-2cc6-4f46-bb96-b22edd9cdcb7",
+      "match_id": 46,
+      "home_score": 0,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T19:02:42.081Z",
+      "updated_at": "2026-06-15T19:02:42.081Z"
+    },
+    {
+      "id": "d64c97e9-8847-45b1-ad09-ab6c3997e242",
+      "user_id": "f9c3c2f2-2cc6-4f46-bb96-b22edd9cdcb7",
+      "match_id": 47,
+      "home_score": 2,
+      "away_score": 0,
+      "points_earned": null,
+      "created_at": "2026-06-15T19:02:48.227Z",
+      "updated_at": "2026-06-15T19:02:48.227Z"
+    },
+    {
+      "id": "28e89996-a641-46d1-95d2-9fdd21e51ed2",
+      "user_id": "f9c3c2f2-2cc6-4f46-bb96-b22edd9cdcb7",
+      "match_id": 48,
+      "home_score": 0,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T19:02:55.474Z",
+      "updated_at": "2026-06-15T19:02:55.474Z"
+    }
+  ],
+  "matches": [
+    {
+      "id": 1,
+      "stage": "group",
+      "group_name": "المجموعة A",
+      "group_key": "A",
+      "home_team": "Mexico",
+      "away_team": "South Africa",
+      "home_team_ar": "المكسيك",
+      "away_team_ar": "جنوب أفريقيا",
+      "home_flag": "🇲🇽",
+      "away_flag": "🇿🇦",
+      "match_date": "2026-06-12T00:00:00Z",
+      "home_score": 2,
+      "away_score": 0,
+      "status": "finished"
+    },
+    {
+      "id": 13,
+      "stage": "group",
+      "group_name": "المجموعة C",
+      "group_key": "C",
+      "home_team": "Brazil",
+      "away_team": "Morocco",
+      "home_team_ar": "البرازيل",
+      "away_team_ar": "المغرب",
+      "home_flag": "🇧🇷",
+      "away_flag": "🇲🇦",
+      "match_date": "2026-06-13T22:00:00Z",
+      "home_score": 1,
+      "away_score": 1,
+      "status": "finished"
+    },
+    {
+      "id": 14,
+      "stage": "group",
+      "group_name": "المجموعة C",
+      "group_key": "C",
+      "home_team": "Haiti",
+      "away_team": "Scotland",
+      "home_team_ar": "هايتي",
+      "away_team_ar": "اسكتلندا",
+      "home_flag": "🇭🇹",
+      "away_flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+      "match_date": "2026-06-14T01:00:00Z",
+      "home_score": 0,
+      "away_score": 1,
+      "status": "finished"
+    },
+    {
+      "id": 19,
+      "stage": "group",
+      "group_name": "المجموعة D",
+      "group_key": "D",
+      "home_team": "USA",
+      "away_team": "Paraguay",
+      "home_team_ar": "الولايات المتحدة",
+      "away_team_ar": "باراغواي",
+      "home_flag": "🇺🇸",
+      "away_flag": "🇵🇾",
+      "match_date": "2026-06-13T01:00:00Z",
+      "home_score": 4,
+      "away_score": 1,
+      "status": "finished"
+    },
+    {
+      "id": 2,
+      "stage": "group",
+      "group_name": "المجموعة A",
+      "group_key": "A",
+      "home_team": "South Korea",
+      "away_team": "Czech Republic",
+      "home_team_ar": "كوريا الجنوبية",
+      "away_team_ar": "التشيك",
+      "home_flag": "🇰🇷",
+      "away_flag": "🇨🇿",
+      "match_date": "2026-06-12T02:30:00Z",
+      "home_score": 2,
+      "away_score": 1,
+      "status": "finished"
+    },
+    {
+      "id": 20,
+      "stage": "group",
+      "group_name": "المجموعة D",
+      "group_key": "D",
+      "home_team": "Australia",
+      "away_team": "Türkiye",
+      "home_team_ar": "أستراليا",
+      "away_team_ar": "تركيا",
+      "home_flag": "🇦🇺",
+      "away_flag": "🇹🇷",
+      "match_date": "2026-06-14T04:00:00Z",
+      "home_score": 2,
+      "away_score": 0,
+      "status": "finished"
+    },
+    {
+      "id": 25,
+      "stage": "group",
+      "group_name": "المجموعة E",
+      "group_key": "E",
+      "home_team": "Germany",
+      "away_team": "Curaçao",
+      "home_team_ar": "ألمانيا",
+      "away_team_ar": "كوراساو",
+      "home_flag": "🇩🇪",
+      "away_flag": "🇨🇼",
+      "match_date": "2026-06-14T17:00:00Z",
+      "home_score": 7,
+      "away_score": 1,
+      "status": "finished"
+    },
+    {
+      "id": 26,
+      "stage": "group",
+      "group_name": "المجموعة E",
+      "group_key": "E",
+      "home_team": "Ivory Coast",
+      "away_team": "Ecuador",
+      "home_team_ar": "كوت ديفوار",
+      "away_team_ar": "الإكوادور",
+      "home_flag": "🇨🇮",
+      "away_flag": "🇪🇨",
+      "match_date": "2026-06-14T23:00:00Z",
+      "home_score": 1,
+      "away_score": 0,
+      "status": "finished"
+    },
+    {
+      "id": 31,
+      "stage": "group",
+      "group_name": "المجموعة F",
+      "group_key": "F",
+      "home_team": "Netherlands",
+      "away_team": "Japan",
+      "home_team_ar": "هولندا",
+      "away_team_ar": "اليابان",
+      "home_flag": "🇳🇱",
+      "away_flag": "🇯🇵",
+      "match_date": "2026-06-14T20:00:00Z",
+      "home_score": 2,
+      "away_score": 2,
+      "status": "finished"
+    },
+    {
+      "id": 32,
+      "stage": "group",
+      "group_name": "المجموعة F",
+      "group_key": "F",
+      "home_team": "Sweden",
+      "away_team": "Tunisia",
+      "home_team_ar": "السويد",
+      "away_team_ar": "تونس",
+      "home_flag": "🇸🇪",
+      "away_flag": "🇹🇳",
+      "match_date": "2026-06-15T02:00:00Z",
+      "home_score": 5,
+      "away_score": 1,
+      "status": "finished"
+    },
+    {
+      "id": 43,
+      "stage": "group",
+      "group_name": "المجموعة H",
+      "group_key": "H",
+      "home_team": "Spain",
+      "away_team": "Cape Verde",
+      "home_team_ar": "إسبانيا",
+      "away_team_ar": "الرأس الأخضر",
+      "home_flag": "🇪🇸",
+      "away_flag": "🇨🇻",
+      "match_date": "2026-06-15T16:00:00Z",
+      "home_score": 0,
+      "away_score": 0,
+      "status": "finished"
+    },
+    {
+      "id": 7,
+      "stage": "group",
+      "group_name": "المجموعة B",
+      "group_key": "B",
+      "home_team": "Canada",
+      "away_team": "Bosnia & Herzegovina",
+      "home_team_ar": "كندا",
+      "away_team_ar": "البوسنة والهرسك",
+      "home_flag": "🇨🇦",
+      "away_flag": "🇧🇦",
+      "match_date": "2026-06-12T19:00:00Z",
+      "home_score": 1,
+      "away_score": 1,
+      "status": "finished"
+    },
+    {
+      "id": 8,
+      "stage": "group",
+      "group_name": "المجموعة B",
+      "group_key": "B",
+      "home_team": "Qatar",
+      "away_team": "Switzerland",
+      "home_team_ar": "قطر",
+      "away_team_ar": "سويسرا",
+      "home_flag": "🇶🇦",
+      "away_flag": "🇨🇭",
+      "match_date": "2026-06-13T21:00:00Z",
+      "home_score": 1,
+      "away_score": 1,
+      "status": "finished"
+    }
+  ]
+}
