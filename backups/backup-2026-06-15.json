@@ -4,6 +4,7 @@
     {
       "id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
       "username": "af9",
+      "password_hash": "$2b$12$qk88DFV1/Z0EiegFgp1l5OGdvmwc/JoyE36LQW5pACR.WNVxs9oa6",
       "points": 0,
       "is_admin": 1,
       "last_login_at": "2026-06-14T19:34:37.917Z",
@@ -12,12 +13,14 @@
     {
       "id": "34c19e35-cf5f-4c91-905d-81ff8f965879",
       "username": "almuhaidib",
+      "password_hash": "$2b$12$VCgxlJfdbImrXAJR1kX4e.xqwHYphfZ5V/onqTs4wfPyzueiVJXfa",
       "points": 1,
-      "is_admin": 1
+      "is_admin": 0
     },
     {
       "id": "1be62843-cf98-4dc0-b747-2aa825d12a5b",
       "username": "الليبرو",
+      "password_hash": "$2b$12$4amqsVRv/Tmr0eq6gpuD8ONstDGVDA4.4QT8.tHaFBG5W5KujBhsK",
       "points": 0,
       "is_admin": 0,
       "created_at": "2026-06-14T19:37:57.174Z"
@@ -26,6 +29,7 @@
       "id": "f9c3c2f2-2cc6-4f46-bb96-b22edd9cdcb7",
       "username": "فتى",
       "display_name": "فتى الحوطه",
+      "password_hash": "$2b$12$mJCrMHoA92TaBjPMdopeje6nU.wslh6n60vo3SSXL7CedXtuG1kyS",
       "points": 0,
       "is_admin": 0,
       "created_at": "2026-06-15T19:02:03.547Z"
@@ -550,9 +554,11 @@
       "id": "77f6bace-5bdf-4c02-baf5-c9ac33661835",
       "user_id": "583fd3ad-ccb3-4097-a1c3-59506433b5ac",
       "match_id": 44,
-      "home_score": 1,
-      "away_score": 2,
-      "points_earned": null
+      "home_score": 2,
+      "away_score": 1,
+      "points_earned": null,
+      "created_at": "2026-06-15T19:34:28.048Z",
+      "updated_at": "2026-06-15T19:34:28.048Z"
     },
     {
       "id": "c58f7d9f-4c8b-4354-b5bb-82703c53d61e",
