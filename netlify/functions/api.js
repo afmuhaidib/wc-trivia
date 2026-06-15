@@ -536,6 +536,30 @@ app.put('/api/auth/profile', authenticate, async (req, res) => {
   res.json({ success: true, display_name: updated.display_name });
 });
 
+// ── Change own password ───────────────────────────────────────────────────────
+app.put('/api/auth/change-password', authenticate, async (req, res) => {
+  const { current_password, new_password } = req.body;
+  if (!current_password || !new_password)
+    return res.status(400).json({ error: 'أدخل كلمة المرور الحالية والجديدة' });
+  if (new_password.length < 6)
+    return res.status(400).json({ error: 'كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل' });
+
+  const { users } = stores();
+  const user = await users.get(`by_id/${req.user.id}`, { type: 'json' }).catch(() => null);
+  if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
+
+  if (!(await bcrypt.compare(current_password, user.password_hash)))
+    return res.status(400).json({ error: 'كلمة المرور الحالية غير صحيحة' });
+
+  const password_hash = await bcrypt.hash(new_password, 12);
+  const updated = { ...user, password_hash };
+  await Promise.all([
+    users.setJSON(`by_id/${req.user.id}`, updated),
+    users.setJSON(`by_username/${user.username}`, updated),
+  ]);
+  res.json({ success: true });
+});
+
 // ── Public user profile (predictions for any user) ───────────────────────────
 app.get('/api/users/:username/predictions', async (req, res) => {
   const { username } = req.params;

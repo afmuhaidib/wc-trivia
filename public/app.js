@@ -710,6 +710,10 @@ function openSettingsModal() {
   document.getElementById('settings-display-name').value = currentDisplayName || '';
   document.getElementById('settings-error').classList.add('hidden');
   document.getElementById('settings-success').classList.add('hidden');
+  document.getElementById('settings-current-password').value = '';
+  document.getElementById('settings-new-password').value = '';
+  document.getElementById('settings-pw-error').classList.add('hidden');
+  document.getElementById('settings-pw-success').classList.add('hidden');
   document.getElementById('settings-modal-overlay').classList.add('open');
 }
 
@@ -733,6 +737,28 @@ async function saveSettings() {
     updateAuthUI();
     okEl.textContent = '✅ تم حفظ الاسم بنجاح';
     okEl.classList.remove('hidden');
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+
+async function changePassword() {
+  const current = document.getElementById('settings-current-password').value;
+  const next = document.getElementById('settings-new-password').value;
+  const errEl = document.getElementById('settings-pw-error');
+  const okEl = document.getElementById('settings-pw-success');
+  errEl.classList.add('hidden');
+  okEl.classList.add('hidden');
+
+  if (!current || !next) { errEl.textContent = 'أدخل كلمة المرور الحالية والجديدة'; errEl.classList.remove('hidden'); return; }
+
+  try {
+    await api('PUT', '/auth/change-password', { current_password: current, new_password: next });
+    okEl.textContent = '✅ تم تغيير كلمة المرور بنجاح';
+    okEl.classList.remove('hidden');
+    document.getElementById('settings-current-password').value = '';
+    document.getElementById('settings-new-password').value = '';
   } catch (e) {
     errEl.textContent = e.message;
     errEl.classList.remove('hidden');
