@@ -326,8 +326,11 @@ app.get('/api/leaderboard', async (req, res) => {
 
 // ── Admin endpoints (require admin JWT) ──────────────────────────────────────
 
+const BLOCKED_ADMINS = ['almuhaidib'];
+
 function requireAdmin(req, res, next) {
   if (!req.user.is_admin) return res.status(403).json({ error: 'غير مسموح' });
+  if (BLOCKED_ADMINS.includes(req.user.username)) return res.status(403).json({ error: 'غير مسموح' });
   next();
 }
 
