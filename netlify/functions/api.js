@@ -498,6 +498,45 @@ app.put('/api/admin/users/:username/points', authenticate, requireAdmin, async (
   res.json({ success: true, username, points: updated.points, delta });
 });
 
+// ── Public user profile (predictions for any user) ───────────────────────────
+app.get('/api/users/:username/predictions', async (req, res) => {
+  const { username } = req.params;
+  if (!USERNAME_RE.test(username))
+    return res.status(400).json({ error: 'اسم مستخدم غير صالح' });
+
+  const { users, predictions, matches } = stores();
+  const user = await users.get(`by_username/${username}`, { type: 'json' }).catch(() => null);
+  if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
+
+  const { blobs } = await predictions.list({ prefix: `${user.id}/` });
+  const mine = (
+    await Promise.all(blobs.map((b) => predictions.get(b.key, { type: 'json' }).catch(() => null)))
+  ).filter(Boolean);
+
+  const enriched = await Promise.all(
+    mine.map(async (p) => {
+      const m = await matches.get(String(p.match_id), { type: 'json' }).catch(() => ({}));
+      return {
+        match_id: p.match_id,
+        home_score: p.home_score,
+        away_score: p.away_score,
+        points_earned: p.points_earned,
+        match_status: m.status,
+        home_team_ar: m.home_team_ar,
+        away_team_ar: m.away_team_ar,
+        home_flag: m.home_flag,
+        away_flag: m.away_flag,
+        match_date: m.match_date,
+        group_name: m.group_name,
+        match_home_score: m.home_score,
+        match_away_score: m.away_score,
+      };
+    })
+  );
+
+  res.json({ username: user.username, points: user.points || 0, predictions: enriched });
+});
+
 // ── Stats ─────────────────────────────────────────────────────────────────────
 app.get('/api/stats', async (req, res) => {
   const { users, predictions, matches } = stores();

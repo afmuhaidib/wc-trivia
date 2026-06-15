@@ -238,11 +238,11 @@ function filterMatches() {
 }
 
 function isToday(dateStr) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  return d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate();
+  const tz = 'Asia/Riyadh';
+  const fmt = { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' };
+  const matchDay = new Intl.DateTimeFormat('en-CA', fmt).format(new Date(dateStr));
+  const today   = new Intl.DateTimeFormat('en-CA', fmt).format(new Date());
+  return matchDay === today;
 }
 
 function renderMatches(matches) {
@@ -328,7 +328,15 @@ function renderMatchCard(match) {
 
   let predTag = '';
   if (myPred) {
-    predTag = `<div class="user-prediction-tag">توقعك: ${esc(myPred.home_score)} - ${esc(myPred.away_score)}</div>`;
+    const pts = myPred.points_earned;
+    let tagClass = '';
+    let ptsSuffix = '';
+    if (isFinished && pts !== null) {
+      if (pts === 5)      { tagClass = 'pred-tag-exact';   ptsSuffix = ' ✓ 5نق'; }
+      else if (pts === 1) { tagClass = 'pred-tag-correct'; ptsSuffix = ' ✓ 1نق'; }
+      else                { tagClass = 'pred-tag-wrong';   ptsSuffix = ' ✗'; }
+    }
+    predTag = `<div class="user-prediction-tag ${tagClass}">توقعك: ${esc(myPred.home_score)} - ${esc(myPred.away_score)}${ptsSuffix}</div>`;
   }
 
   // match.status is compared to a known set above, safe to use as CSS class
@@ -391,8 +399,10 @@ function renderMyPredictions() {
     let ptsBadge;
     if (pts === null) {
       ptsBadge = `<div class="pts-badge pending"><span>⏳</span><div class="pts-label">قيد الانتظار</div></div>`;
+    } else if (pts === 0) {
+      ptsBadge = `<div class="pts-badge pts-0"><span>✗</span><div class="pts-label">0 نقاط</div></div>`;
     } else {
-      ptsBadge = `<div class="pts-badge ${ptsClass}"><span>${pts}</span><div class="pts-label">نقطة</div></div>`;
+      ptsBadge = `<div class="pts-badge ${ptsClass}"><span>✓ ${pts}</span><div class="pts-label">نقطة</div></div>`;
     }
 
     const matchResult = p.match_home_score !== null
@@ -565,7 +575,7 @@ function renderLeaderboard(users) {
       <div class="lb-row">
         <div class="lb-rank ${rankClass(i)}">${rankIcon(i)}</div>
         <div class="lb-user">
-          <div class="lb-avatar ${rankClass(i)}">${esc((u.username[0] || '?').toUpperCase())}</div>
+          <div class="lb-avatar ${rankClass(i)} lb-avatar-btn" onclick="openUserProfile('${esc(u.username)}')">${esc((u.username[0] || '?').toUpperCase())}</div>
           <div class="lb-username ${isMe ? 'me' : ''}">${esc(u.username)}${isMe ? ' (أنت)' : ''}</div>
         </div>
         <div class="lb-points" style="color:var(--green-dark)">${esc(u.points)}</div>
@@ -664,6 +674,84 @@ async function adminAdjustPoints() {
     errEl.textContent = e.message;
     errEl.classList.remove('hidden');
   }
+}
+
+/* ── User Profile Modal ────────────────────────────────────────────────────── */
+function openUserProfile(username) {
+  document.getElementById('profile-modal-overlay').classList.add('open');
+  document.getElementById('profile-modal-content').innerHTML =
+    '<div class="loading"><div class="spinner"></div>جاري التحميل...</div>';
+
+  fetch('/api/users/' + encodeURIComponent(username) + '/predictions', { cache: 'no-store' })
+    .then(r => r.json())
+    .then(data => renderUserProfile(data))
+    .catch(() => {
+      document.getElementById('profile-modal-content').innerHTML =
+        '<div class="loading">فشل التحميل</div>';
+    });
+}
+
+function closeProfileModal() {
+  document.getElementById('profile-modal-overlay').classList.remove('open');
+}
+
+function renderUserProfile(data) {
+  const { username, points, predictions } = data;
+  const predMap = {};
+  predictions.forEach(p => { predMap[p.match_id] = p; });
+
+  const exact   = predictions.filter(p => p.points_earned === 5).length;
+  const correct = predictions.filter(p => p.points_earned === 1).length;
+  const wrong   = predictions.filter(p => p.points_earned === 0).length;
+  const total   = predictions.length;
+
+  // 104 squares, 13 cols × 8 rows
+  let gridHtml = '';
+  for (let i = 1; i <= 104; i++) {
+    const p = predMap[i];
+    let cls = 'commit-sq commit-none';
+    let title = String(i);
+    if (p) {
+      const scoreStr = p.home_score + '-' + p.away_score;
+      if (p.match_status === 'finished' && p.points_earned !== null) {
+        if (p.points_earned === 5)      cls = 'commit-sq commit-exact';
+        else if (p.points_earned === 1) cls = 'commit-sq commit-correct';
+        else                            cls = 'commit-sq commit-wrong';
+        title = i + ': ' + scoreStr + ' +' + p.points_earned;
+      } else {
+        cls = 'commit-sq commit-pending';
+        title = i + ': ' + scoreStr;
+      }
+    }
+    gridHtml += `<div class="${cls}" title="${title}"></div>`;
+  }
+
+  const initial = esc((username[0] || '?').toUpperCase());
+  document.getElementById('profile-modal-content').innerHTML = `
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,var(--green),var(--green-light));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#fff;margin:0 auto 10px">${initial}</div>
+      <div style="font-weight:900;font-size:1.2rem;margin-bottom:4px">${esc(username)}</div>
+      <div style="color:var(--gold);font-weight:900;font-size:1.5rem">${esc(points)} نقطة</div>
+    </div>
+    <div class="profile-stats-grid">
+      <div class="profile-stat"><div class="profile-stat-val" style="color:var(--green-dark)">${exact}</div><div class="profile-stat-lbl">🎯 نتيجة صحيحة</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" style="color:var(--gold-dark)">${correct}</div><div class="profile-stat-lbl">✅ فائز صحيح</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" style="color:var(--red)">${wrong}</div><div class="profile-stat-lbl">❌ خاطئ</div></div>
+      <div class="profile-stat"><div class="profile-stat-val">${total}</div><div class="profile-stat-lbl">📋 توقعات</div></div>
+    </div>
+    <div class="commit-grid-wrap">
+      <div style="font-size:.82rem;font-weight:700;color:var(--text-muted);margin-bottom:8px">التوقعات (${total} / 104)</div>
+      <div class="commit-grid">${gridHtml}</div>
+      <div class="commit-legend">
+        <span>بدون</span>
+        <div class="commit-sq commit-none" style="pointer-events:none"></div>
+        <div class="commit-sq commit-pending" style="pointer-events:none"></div>
+        <div class="commit-sq commit-wrong" style="pointer-events:none"></div>
+        <div class="commit-sq commit-correct" style="pointer-events:none"></div>
+        <div class="commit-sq commit-exact" style="pointer-events:none"></div>
+        <span>مثالي</span>
+      </div>
+    </div>`;
 }
 
 /* ── Helpers ───────────────────────────────────────────────────────────────── */

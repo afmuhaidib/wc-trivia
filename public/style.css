@@ -449,9 +449,9 @@ body {
   gap: 12px;
   border-right: 5px solid var(--border);
 }
-.pred-card.pts-5 { border-right-color: var(--green-light); }
-.pred-card.pts-1 { border-right-color: var(--gold); }
-.pred-card.pts-0 { border-right-color: var(--red); }
+.pred-card.pts-5 { border-right-color: var(--green-light); background: #edfaf1; }
+.pred-card.pts-1 { border-right-color: var(--gold); background: #edfaf1; }
+.pred-card.pts-0 { border-right-color: var(--red); background: #fdecea; }
 .pred-card.pending { border-right-color: var(--text-muted); }
 
 .pred-score-display { font-size: 1.4rem; font-weight: 900; color: var(--text); text-align: center; }
@@ -757,13 +757,14 @@ body {
   font-size: .92rem;
   box-shadow: var(--shadow-lg);
   z-index: 2000;
-  transition: transform .3s ease;
+  transition: transform .3s ease, opacity .3s ease;
+  opacity: 0;
   pointer-events: none;
   white-space: nowrap;
   max-width: calc(100vw - 32px);
   text-align: center;
 }
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .toast.success { background: var(--green-dark); }
 .toast.error { background: var(--red); }
 
@@ -877,6 +878,61 @@ body {
   .lb-username { font-size: .85rem; }
   .lb-avatar { width: 32px; height: 32px; font-size: .8rem; }
 }
+
+/* ── Prediction tag color variants ───────────────────────────────────────── */
+.user-prediction-tag.pred-tag-exact   { background: var(--green-pale); color: var(--green-dark); border: 1px solid var(--green-light); }
+.user-prediction-tag.pred-tag-correct { background: #fff8e6; color: var(--gold-dark); border: 1px solid var(--gold); }
+.user-prediction-tag.pred-tag-wrong   { background: #fde8e8; color: var(--red); border: 1px solid #f9a8a8; }
+
+/* ── Leaderboard clickable avatar ────────────────────────────────────────── */
+.lb-avatar-btn { cursor: pointer; transition: transform var(--transition), box-shadow var(--transition); }
+.lb-avatar-btn:active { transform: scale(0.92); box-shadow: 0 0 0 3px var(--green-pale); }
+
+/* ── Profile modal ────────────────────────────────────────────────────────── */
+.profile-modal { max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.profile-stat-val { font-size: 1.4rem; font-weight: 900; }
+.profile-stat-lbl { font-size: .7rem; color: var(--text-muted); margin-top: 2px; }
+
+/* ── GitHub-style commit grid ─────────────────────────────────────────────── */
+.commit-grid-wrap { margin-top: 4px; }
+
+.commit-grid {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 3px;
+}
+
+.commit-sq {
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+}
+.commit-none    { background: var(--border); }
+.commit-pending { background: #bfdbfe; }
+.commit-wrong   { background: #fca5a5; }
+.commit-correct { background: var(--gold); }
+.commit-exact   { background: var(--green-light); }
+
+.commit-legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  font-size: .72rem;
+  color: var(--text-muted);
+  justify-content: flex-end;
+}
+.commit-legend .commit-sq { width: 12px; height: 12px; flex-shrink: 0; }
 
 /* ── Admin Panel ─────────────────────────────────────────────────────────── */
 .admin-panel {

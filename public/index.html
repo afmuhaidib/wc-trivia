@@ -276,6 +276,15 @@
       </div>
     </div>
 
+    <!-- User Profile Modal -->
+    <div class="modal-overlay" id="profile-modal-overlay" onclick="closeProfileModal()">
+      <div class="modal profile-modal" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <button class="modal-close" onclick="closeProfileModal()">✕</button>
+        <div id="profile-modal-content"></div>
+      </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 

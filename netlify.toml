@@ -20,3 +20,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[functions."auto-sync"]
+  schedule = "*/5 * * * *"
