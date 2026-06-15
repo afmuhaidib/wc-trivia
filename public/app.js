@@ -681,6 +681,29 @@ async function adminAdjustPoints() {
   }
 }
 
+async function adminResetPassword() {
+  const username = document.getElementById('admin-reset-username').value.trim();
+  const new_password = document.getElementById('admin-reset-password').value;
+  const errEl = document.getElementById('admin-reset-error');
+  const resultEl = document.getElementById('admin-reset-result');
+
+  errEl.classList.add('hidden');
+  resultEl.classList.add('hidden');
+
+  if (!username) { errEl.textContent = 'أدخل اسم المستخدم'; errEl.classList.remove('hidden'); return; }
+  if (!new_password || new_password.length < 4) { errEl.textContent = 'كلمة المرور يجب أن تكون 4 أحرف على الأقل'; errEl.classList.remove('hidden'); return; }
+
+  try {
+    await api('PUT', `/admin/users/${encodeURIComponent(username)}/reset-password`, { new_password });
+    resultEl.textContent = `✅ تم تغيير كلمة مرور ${esc(username)} بنجاح`;
+    resultEl.classList.remove('hidden');
+    document.getElementById('admin-reset-password').value = '';
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+
 /* ── Settings Modal ────────────────────────────────────────────────────────── */
 function openSettingsModal() {
   if (!currentUser) { openModal('login'); return; }

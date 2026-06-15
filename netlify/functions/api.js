@@ -500,6 +500,24 @@ app.put('/api/admin/users/:username/points', authenticate, requireAdmin, async (
   res.json({ success: true, username, points: updated.points, delta });
 });
 
+// ── Admin reset password ──────────────────────────────────────────────────────
+app.put('/api/admin/users/:username/reset-password', authenticate, requireAdmin, async (req, res) => {
+  const { username } = req.params;
+  const { new_password } = req.body;
+  if (!new_password || typeof new_password !== 'string' || new_password.length < 4)
+    return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 4 أحرف على الأقل' });
+  const { users } = stores();
+  const user = await users.get(`by_username/${username}`, { type: 'json' }).catch(() => null);
+  if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
+  const password_hash = await bcrypt.hash(new_password, 12);
+  const updated = { ...user, password_hash };
+  await Promise.all([
+    users.setJSON(`by_username/${username}`, updated),
+    users.setJSON(`by_id/${user.id}`, updated),
+  ]);
+  res.json({ success: true, username });
+});
+
 // ── Update own profile ────────────────────────────────────────────────────────
 app.put('/api/auth/profile', authenticate, async (req, res) => {
   const { display_name } = req.body;
