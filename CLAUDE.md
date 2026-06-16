@@ -200,6 +200,46 @@ Register Telegram webhook after deploy:
 curl "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://wc-af.netlify.app/.netlify/functions/telegram"
 ```
 
+## Score Syncing & Admin JWT
+
+**sync-scores** pulls from `openfootball/worldcup.json` but does NOT trigger `recalculatePoints`. After a sync, always re-enter the result via `PUT /api/admin/matches/:id` with `status: "finished"` to award points. Reset first if the match was already marked finished:
+```bash
+# Reset then re-trigger recalculation
+curl -X PUT .../api/admin/matches/<id> -d '{"status":"upcoming","home_score":null,"away_score":null}'
+curl -X PUT .../api/admin/matches/<id> -d '{"home_score":X,"away_score":Y,"status":"finished"}'
+```
+
+**Minting an admin JWT locally** (when token expires):
+```bash
+node -e "
+const jwt = require('./node_modules/jsonwebtoken');
+console.log(jwt.sign(
+  { id: '<user_id>', username: '<username>', is_admin: true },
+  '<JWT_SECRET>',
+  { expiresIn: '1h' }
+));
+"
+```
+Get `JWT_SECRET` via `netlify env:get JWT_SECRET`. Get user ID via `netlify blobs:get users "by_username/<name>"`.
+
+**reseed-matches uses the deployed function bundle** — if `data/matches.js` changed locally, always `netlify deploy --prod --skip-functions-cache` before calling reseed, otherwise it reseeds from the stale cached version.
+
+---
+
+## Date / Timezone Rules
+
+All `match_date` values are stored as UTC ISO strings. The frontend always displays and compares in **Asia/Riyadh (UTC+3)**:
+- `isToday()` compares both dates formatted in `Asia/Riyadh` — never use raw `getDate()` comparisons.
+- `formatDate()` uses `timeZone: 'Asia/Riyadh'` hardcoded.
+
+---
+
+## API Route Gotchas
+
+- `PUT /api/matches/:id/result` has a **409 guard** — errors if match is already `finished`. Use `PUT /api/admin/matches/:id` to overwrite without the guard.
+- `PUT /api/admin/matches/:id` triggers `recalculatePoints` only when payload includes `status: "finished"`.
+- `POST /api/admin/sync-scores` does **not** recalculate points — manually re-enter results after syncing.
+
 ---
 
 DO NOT SPAWN AGENTS OR SUBAGENTS AS THIS WILL MAKE DEVELOPMENT SLOWER
