@@ -14,9 +14,18 @@ async function getAllJSON(store) {
 
 async function recalculatePoints(matchId, homeScore, awayScore, predictions, users) {
   const all = await getAllJSON(predictions);
-  const relevant = all.filter(
-    (p) => String(p.match_id) === String(matchId) && p.points_earned === null
-  );
+  const forMatch = all.filter((p) => String(p.match_id) === String(matchId));
+
+  // Deduplicate by user_id — keep only one prediction per user (prefer the compound-keyed
+  // one over UUID-keyed stale blobs, but since getAllJSON returns values not keys we can't
+  // tell them apart here; take the last seen, which is fine since both have the same scores).
+  const byUser = {};
+  for (const p of forMatch) {
+    // Only score predictions that haven't been scored yet
+    if (p.points_earned === null) byUser[p.user_id] = p;
+    else if (!byUser[p.user_id]) byUser[p.user_id] = p; // keep for reference but won't score
+  }
+  const relevant = Object.values(byUser).filter((p) => p.points_earned === null);
 
   const userDeltas = {};
   const predUpdates = [];
