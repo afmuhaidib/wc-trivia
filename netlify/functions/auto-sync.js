@@ -104,8 +104,19 @@ exports.handler = async function (event) {
     const comp = evt.competitions?.[0];
     if (!comp) { skipped++; continue; }
 
-    const homeComp = comp.competitors?.find((c) => c.homeAway === 'home');
-    const awayComp = comp.competitors?.find((c) => c.homeAway === 'away');
+    // Match ESPN competitors to our stored home/away by team name, not ESPN's home/away
+    // designation — ESPN may list a different team as "home" than our fixture data.
+    const normalize = (s) => (s || '').toLowerCase().replace(/[^a-z]/g, '');
+    const storedHome = normalize(stored.home_team);
+    const storedAway = normalize(stored.away_team);
+    const competitors = comp.competitors || [];
+    let homeComp = competitors.find((c) => normalize(c.team?.displayName) === storedHome);
+    let awayComp = competitors.find((c) => normalize(c.team?.displayName) === storedAway);
+    // Fall back to ESPN's home/away if name matching fails
+    if (!homeComp || !awayComp) {
+      homeComp = competitors.find((c) => c.homeAway === 'home');
+      awayComp = competitors.find((c) => c.homeAway === 'away');
+    }
     if (!homeComp || !awayComp) { skipped++; continue; }
 
     const homeScore = Number(homeComp.score);

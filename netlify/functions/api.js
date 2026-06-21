@@ -19,6 +19,7 @@ function stores() {
     predictions: getStore('predictions'),
     adminLogs: getStore('admin-logs'),
     ipLogs: getStore('ip-logs'),
+    activityLogs: getStore('activity-logs'),
   };
 }
 
@@ -29,6 +30,11 @@ function getIP(req) {
 async function logIP(store, action, username, ip) {
   const key = `${action}/${Date.now()}_${randomUUID()}`;
   await store.setJSON(key, { action, username, ip, at: new Date().toISOString() });
+}
+
+async function logActivity(store, { user_id, username, action, details = {}, ip }) {
+  const key = `${Date.now()}_${randomUUID()}`;
+  await store.setJSON(key, { user_id, username, action, details, ip, at: new Date().toISOString() });
 }
 
 async function getAllJSON(store) {
@@ -85,7 +91,7 @@ app.post('/api/auth/register', async (req, res) => {
     return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' });
 
   const { display_name } = req.body;
-  const { users, ipLogs } = stores();
+  const { users, ipLogs, activityLogs } = stores();
   const id = randomUUID();
   const hash = await bcrypt.hash(password, 12);
   const user = { id, username, display_name: (display_name || username).slice(0, 64), password_hash: hash, points: 0, is_admin: 0, created_at: new Date().toISOString() };
@@ -97,9 +103,11 @@ app.post('/api/auth/register', async (req, res) => {
   } catch {
     return res.status(409).json({ error: 'اسم المستخدم موجود مسبقاً' });
   }
+  const ip = getIP(req);
   await Promise.all([
     users.setJSON(`by_id/${id}`, user),
-    logIP(ipLogs, 'register', username, getIP(req)),
+    logIP(ipLogs, 'register', username, ip),
+    logActivity(activityLogs, { user_id: id, username, action: 'register', details: { display_name: user.display_name }, ip }),
   ]);
 
   const token = jwt.sign({ id, username, is_admin: false }, JWT_SECRET, { expiresIn: '7d' });
@@ -111,16 +119,18 @@ app.post('/api/auth/login', async (req, res) => {
   if (!username || !password)
     return res.status(400).json({ error: 'اسم المستخدم وكلمة المرور مطلوبان' });
 
-  const { users, ipLogs } = stores();
+  const { users, ipLogs, activityLogs } = stores();
   const user = await users.get(`by_username/${username}`, { type: 'json' }).catch(() => null);
   if (!user || !(await bcrypt.compare(password, user.password_hash)))
     return res.status(401).json({ error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
 
+  const ip = getIP(req);
   const updatedUser = { ...user, last_login_at: new Date().toISOString() };
   await Promise.all([
     users.setJSON(`by_username/${username}`, updatedUser),
     users.setJSON(`by_id/${user.id}`, updatedUser),
-    logIP(ipLogs, 'login', username, getIP(req)),
+    logIP(ipLogs, 'login', username, ip),
+    logActivity(activityLogs, { user_id: user.id, username, action: 'login', ip }),
   ]);
 
   const token = jwt.sign(
@@ -180,7 +190,7 @@ async function recalculatePoints(matchId, homeScore, awayScore) {
   const all = await getAllJSON(predictions);
   // matchId may be a string key like "42"; normalize for comparison
   const relevant = all.filter(
-    (p) => String(p.match_id) === String(matchId) && p.points_earned === null
+    (p) => String(p.match_id) === String(matchId)
   );
 
   // Accumulate per-user point deltas before writing to avoid partial updates
@@ -194,8 +204,10 @@ async function recalculatePoints(matchId, homeScore, awayScore) {
     const correct = Math.sign(hs - as) === Math.sign(homeScore - awayScore);
     const pts = exact ? 5 : correct ? 1 : 0;
 
+    const oldPts = pred.points_earned ?? 0;
     predUpdates.push({ ...pred, points_earned: pts });
-    userDeltas[pred.user_id] = (userDeltas[pred.user_id] || 0) + pts;
+    // delta is new pts minus what was already credited (null treated as 0)
+    userDeltas[pred.user_id] = (userDeltas[pred.user_id] || 0) + (pts - oldPts);
   }
 
   // Write prediction results
@@ -226,7 +238,7 @@ app.post('/api/predictions', authenticate, async (req, res) => {
   if (home_score < 0 || away_score < 0 || home_score > 20 || away_score > 20)
     return res.status(400).json({ error: 'نتيجة غير صالحة' });
 
-  const { matches, predictions, ipLogs } = stores();
+  const { matches, predictions, ipLogs, activityLogs } = stores();
   const match = await matches.get(String(match_id), { type: 'json' }).catch(() => null);
   if (!match) return res.status(404).json({ error: 'المباراة غير موجودة' });
   if (match.status === 'finished')
@@ -249,9 +261,19 @@ app.post('/api/predictions', authenticate, async (req, res) => {
     created_at: existing?.created_at ?? now,
     updated_at: now,
   };
+  const ip = getIP(req);
+  const action = existing ? 'edit_prediction' : 'new_prediction';
+  const logDetails = {
+    match_id,
+    home_team: match.home_team,
+    away_team: match.away_team,
+    pred: `${home_score}-${away_score}`,
+    ...(existing ? { prev_pred: `${existing.home_score}-${existing.away_score}` } : {}),
+  };
   await Promise.all([
     predictions.setJSON(predKey, pred),
-    logIP(ipLogs, 'predict', req.user.username, getIP(req)),
+    logIP(ipLogs, 'predict', req.user.username, ip),
+    logActivity(activityLogs, { user_id: req.user.id, username: req.user.username, action, details: logDetails, ip }),
   ]);
 
   res.json({ success: true, message: 'تم حفظ توقعك بنجاح' });
@@ -522,12 +544,29 @@ app.put('/api/admin/users/:username/reset-password', authenticate, requireAdmin,
 });
 
 // ── Update own profile ────────────────────────────────────────────────────────
+app.post('/api/auth/ping', authenticate, async (req, res) => {
+  const { users } = stores();
+  const user = await users.get(`by_id/${req.user.id}`, { type: 'json' }).catch(() => null);
+  if (!user) return res.status(404).json({ error: 'not found' });
+  const now = new Date().toISOString();
+  // Only write if last seen was more than 5 minutes ago to reduce blob writes
+  const lastSeen = user.last_seen_at ? new Date(user.last_seen_at) : null;
+  if (!lastSeen || (Date.now() - lastSeen) > 5 * 60 * 1000) {
+    const updated = { ...user, last_seen_at: now };
+    await Promise.all([
+      users.setJSON(`by_id/${req.user.id}`, updated),
+      users.setJSON(`by_username/${user.username}`, updated),
+    ]);
+  }
+  res.json({ ok: true });
+});
+
 app.put('/api/auth/profile', authenticate, async (req, res) => {
   const { display_name } = req.body;
   if (!display_name || typeof display_name !== 'string' || !display_name.trim())
     return res.status(400).json({ error: 'الاسم مطلوب' });
 
-  const { users } = stores();
+  const { users, activityLogs } = stores();
   const user = await users.get(`by_id/${req.user.id}`, { type: 'json' }).catch(() => null);
   if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
 
@@ -535,6 +574,7 @@ app.put('/api/auth/profile', authenticate, async (req, res) => {
   await Promise.all([
     users.setJSON(`by_id/${req.user.id}`, updated),
     users.setJSON(`by_username/${user.username}`, updated),
+    logActivity(activityLogs, { user_id: req.user.id, username: user.username, action: 'edit_profile', details: { prev_display_name: user.display_name, new_display_name: updated.display_name }, ip: getIP(req) }),
   ]);
   res.json({ success: true, display_name: updated.display_name });
 });
@@ -559,6 +599,7 @@ app.put('/api/auth/change-password', authenticate, async (req, res) => {
   await Promise.all([
     users.setJSON(`by_id/${req.user.id}`, updated),
     users.setJSON(`by_username/${user.username}`, updated),
+    logActivity(getStore('activity-logs'), { user_id: req.user.id, username: user.username, action: 'change_password', ip: getIP(req) }),
   ]);
   res.json({ success: true });
 });
@@ -600,6 +641,18 @@ app.get('/api/users/:username/predictions', async (req, res) => {
   );
 
   res.json({ username: user.username, display_name: user.display_name || user.username, points: user.points || 0, predictions: enriched });
+});
+
+// ── Activity logs (admin) ─────────────────────────────────────────────────────
+app.get('/api/admin/activity-logs', authenticate, requireAdmin, async (req, res) => {
+  const { activityLogs } = stores();
+  const logs = await getAllJSON(activityLogs);
+  const { username, action } = req.query;
+  let filtered = logs;
+  if (username) filtered = filtered.filter((l) => l.username === username);
+  if (action) filtered = filtered.filter((l) => l.action === action);
+  filtered.sort((a, b) => new Date(b.at) - new Date(a.at));
+  res.json(filtered.slice(0, 500));
 });
 
 // ── Stats ─────────────────────────────────────────────────────────────────────

@@ -22,10 +22,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (currentUser) {
     loadMyPredictions();
+    api('POST', '/auth/ping', {}).catch(() => {});
   }
 
-  // Re-render match cards every minute so prediction lock kicks in automatically
-  setInterval(() => {
+  // Refresh match data from server every 60s so scores update automatically
+  setInterval(async () => {
+    try {
+      const fresh = await api('GET', '/matches');
+      allMatches = fresh;
+      // If any match is 110+ min past kickoff but still not finished, nudge auto-sync
+      const now = Date.now();
+      const needsSync = allMatches.some(m =>
+        m.status !== 'finished' && m.home_team !== 'TBD' && m.match_date &&
+        (now - new Date(m.match_date)) / 60000 >= 110
+      );
+      if (needsSync) fetch('/.netlify/functions/auto-sync').catch(() => {});
+    } catch (_) {}
     if (allMatches.length) filterMatches();
   }, 60 * 1000);
 });
@@ -312,8 +324,10 @@ function renderMatchCard(match) {
   }
 
   let statusBadge = '';
+  const isLive = isPast && (Date.now() - new Date(match.match_date)) / 60000 < 110;
   if (isFinished) statusBadge = '<span class="match-status-badge badge-finished">انتهت</span>';
-  else if (isPast) statusBadge = '<span class="match-status-badge badge-live">جارية</span>';
+  else if (isLive) statusBadge = '<span class="match-status-badge badge-live">جارية</span>';
+  else if (isPast) statusBadge = '<span class="match-status-badge badge-live">جارية ⏳</span>';
   else statusBadge = '<span class="match-status-badge badge-upcoming">قادمة</span>';
 
   let actionBtn = '';
@@ -596,9 +610,9 @@ function renderLeaderboard(users) {
         <div style="text-align:center">#</div>
         <div>اللاعب</div>
         <div style="text-align:center">النقاط</div>
-        <div style="text-align:center">نتائج صحيحة</div>
-        <div style="text-align:center">فائز صحيح</div>
-        <div style="text-align:center">التوقعات</div>
+        <div style="text-align:center">🎯</div>
+        <div style="text-align:center">✅</div>
+        <div style="text-align:center">📋</div>
       </div>
       ${rows}
     </div>`;
