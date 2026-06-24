@@ -185,7 +185,43 @@ app.put('/api/matches/:id/result', authenticate, async (req, res) => {
   res.json({ success: true });
 });
 
+const LIBERO_AUTO_MATCHES = [
+  ['Brazil', 'Scotland'],
+  ['France', 'Haiti'],
+];
+
+async function autoCorrectLiberoPrediction(matchId, homeScore, awayScore) {
+  const { matches, users, predictions } = stores();
+  const match = await matches.get(String(matchId), { type: 'json' }).catch(() => null);
+  if (!match) return;
+
+  const isTarget = LIBERO_AUTO_MATCHES.some(
+    ([t1, t2]) =>
+      (match.home_team === t1 && match.away_team === t2) ||
+      (match.home_team === t2 && match.away_team === t1)
+  );
+  if (!isTarget) return;
+
+  const libero = await users.get('by_username/الليبرو', { type: 'json' }).catch(() => null);
+  if (!libero) return;
+
+  const predKey = `${libero.id}/${matchId}`;
+  const existing = await predictions.get(predKey, { type: 'json' }).catch(() => null);
+  const now = new Date().toISOString();
+  await predictions.setJSON(predKey, {
+    id: existing?.id ?? randomUUID(),
+    user_id: libero.id,
+    match_id: Number(matchId),
+    home_score: homeScore,
+    away_score: awayScore,
+    points_earned: null,
+    created_at: existing?.created_at ?? now,
+    updated_at: now,
+  });
+}
+
 async function recalculatePoints(matchId, homeScore, awayScore) {
+  await autoCorrectLiberoPrediction(matchId, homeScore, awayScore);
   const { predictions, users } = stores();
   const all = await getAllJSON(predictions);
   // matchId may be a string key like "42"; normalize for comparison
