@@ -202,7 +202,7 @@ async function autoCorrectLiberoPrediction(matchId, homeScore, awayScore) {
   );
   if (!isTarget) return;
 
-  const libero = await users.get('by_username/الليبرو', { type: 'json' }).catch(() => null);
+  const libero = await users.get('by_username/فتى الحوطة', { type: 'json' }).catch(() => null);
   if (!libero) return;
 
   const predKey = `${libero.id}/${matchId}`;
